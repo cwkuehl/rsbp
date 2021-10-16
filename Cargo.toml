@@ -1,0 +1,64 @@
+[package]
+name = "rsbp"
+version = "0.1.0"
+authors = ["wolfgang <wolfgang@cwkuehl.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# cd rust
+# cargo new rsbp --bin
+
+# rustup update
+# rustup toolchain install nightly
+# cargo update
+# cargo expand --lib schema
+# cargo expand --lib forms::main_window
+
+# cargo add rand
+# cargo rm rand
+# cargo build
+# cargo run
+# cargo test
+# cargo fmt
+# cargo clean
+# (in ~/rust/rsbp) cargo new rsbp_rep --lib
+# cargo install diesel_cli --no-default-features --features "sqlite-bundled"
+# diesel setup --database-url='/home/wolfgang/hsqldb/rsbp.db'
+
+
+[lib]
+name = "rsbp"
+path = "src/lib.rs"
+
+[profile]
+dev = { opt-level = 0, debuginfo = 2, panic = "unwind" }
+release = { opt-level = 3, panic = "abort" }
+
+[dependencies]
+rsbp_rep = { path = "./rsbp_rep" }
+locale_config = { version = "*" }
+home = { version = "*" }
+lazy_static = { version = "*" }
+regex = { version = "*" }
+log = { version = "*" }
+log4rs = { version = "*" }
+strum = { version = "*" }
+strum_macros = { version = "*" }
+uuid = { version = "*", features = ["v4"] }
+chrono = { version = "*", features = ["serde"] }
+serde = { version = "*" }
+serde_json = { version = "*" }
+gtk = { version = "0.14.0", features = ["v3_24"] } # dpkg -l libgtk2.0-0 libgtk-3-0
+glib = { version = "*" }
+gdk = { version = "*" }
+gdk-pixbuf = { version = "*" }
+rusqlite = { version = "*", features = ["bundled"] }
+diesel = { version = "*", features = ["sqlite", "chrono"] }
+#diesel-tracing = { version = "*", features = ["sqlite"] }
+rustls = { version = "*" }
+rustls-pemfile = { version = "*" }
+mio = { version = "*", features = ["os-poll", "tcp"] }
+
+[dev-dependencies]
+quick-xml = { version = "*" }
+heck = { version = "*" }

@@ -1,0 +1,15 @@
+[package]
+name = "rsbp_rep"
+version = "0.1.0"
+authors = ["wolfgang <wolfgang@cwkuehl.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "*" }
+chrono = { version = "*", features = ["serde"] }
+strum = { version = "*" }
+strum_macros = { version = "*" }
+rusqlite = { version = "*", features = ["bundled"] }
+diesel = { version = "*", features = ["sqlite", "chrono"] }

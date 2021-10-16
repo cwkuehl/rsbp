@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tables>
+  <table name="AD_Adresse">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Staat" type="VARCHAR" length="3" nullable="true" />
+    <column name="Plz" type="VARCHAR" length="10" nullable="true" />
+    <column name="Ort" type="VARCHAR" length="40" nullable="false" />
+    <column name="Strasse" type="VARCHAR" length="40" nullable="true" />
+    <column name="HausNr" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="AD_Person">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Typ" type="INTEGER" nullable="false" />
+    <column name="Geschlecht" type="VARCHAR" length="1" nullable="false" />
+    <column name="Geburt" type="DATE" nullable="true" />
+    <column name="GeburtK" type="INTEGER" nullable="false" />
+    <column name="Anrede" type="INTEGER" nullable="false" />
+    <column name="FAnrede" type="INTEGER" nullable="false" />
+    <column name="Name1" type="VARCHAR" length="40" nullable="false" />
+    <column name="Name2" type="VARCHAR" length="40" nullable="true" />
+    <column name="Praedikat" type="VARCHAR" length="40" nullable="true" />
+    <column name="Vorname" type="VARCHAR" length="40" nullable="true" />
+    <column name="Titel" type="VARCHAR" length="40" nullable="true" />
+    <column name="Person_Status" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="AD_Sitz">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Person_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Reihenfolge" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Typ" type="INTEGER" nullable="false" />
+    <column name="Name" type="VARCHAR" length="40" nullable="false" />
+    <column name="Adresse_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Telefon" type="VARCHAR" length="40" nullable="true" />
+    <column name="Fax" type="VARCHAR" length="40" nullable="true" />
+    <column name="Mobil" type="VARCHAR" length="40" nullable="true" />
+    <column name="Email" type="VARCHAR" length="40" nullable="true" />
+    <column name="Homepage" type="VARCHAR" length="100" nullable="true" />
+    <column name="Postfach" type="VARCHAR" length="10" nullable="true" />
+    <column name="Bemerkung" type="VARCHAR" length="255" nullable="true" />
+    <column name="Sitz_Status" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Person_Uid" />
+      <keycolumn name="Reihenfolge" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="Benutzer">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Benutzer_ID" type="VARCHAR" length="20" nullable="false" />
+    <column name="Passwort" type="VARCHAR" length="50" nullable="true" />
+    <column name="Berechtigung" type="INTEGER" nullable="false" />
+    <column name="Akt_Periode" type="INTEGER" nullable="false" />
+    <column name="Person_Nr" type="INTEGER" nullable="false" />
+    <column name="Geburt" type="DATE" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Benutzer_ID" />
+    </primarykey>
+  </table>
+  <table name="Byte_Daten">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Typ" type="VARCHAR" length="20" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Lfd_Nr" type="INTEGER" nullable="false" />
+    <column name="Metadaten" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Bytes" type="BLOB" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Typ" />
+      <keycolumn name="Uid" />
+      <keycolumn name="Lfd_Nr" />
+    </primarykey>
+  </table>
+  <table name="FZ_Buch">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Autor_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Serie_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Seriennummer" type="INTEGER" nullable="false" />
+    <column name="Titel" type="VARCHAR" length="255" nullable="false" />
+    <column name="Untertitel" type="VARCHAR" length="255" nullable="true" />
+    <column name="Seiten" type="INTEGER" nullable="false" />
+    <column name="Sprache_Nr" type="INTEGER" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="FZ_Buchautor">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="255" nullable="false" />
+    <column name="Vorname" type="VARCHAR" length="255" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="FZ_Buchserie">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="255" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="FZ_Buchstatus">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Buch_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Ist_Besitz" type="BOOLEAN" nullable="false" />
+    <column name="Lesedatum" type="DATE" nullable="true" />
+    <column name="Hoerdatum" type="DATE" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Buch_Uid" />
+    </primarykey>
+  </table>
+  <table name="FZ_Fahrrad">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Typ" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="FZ_Fahrradstand">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Fahrrad_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Nr" type="INTEGER" nullable="false" />
+    <column name="Zaehler_km" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Periode_km" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Periode_Schnitt" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="255" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Fahrrad_Uid" />
+      <keycolumn name="Datum" />
+      <keycolumn name="Nr" />
+    </primarykey>
+  </table>
+  <table name="FZ_Notiz">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Thema" type="VARCHAR" length="100" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HH_Bilanz">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Periode" type="INTEGER" nullable="false" />
+    <column name="Kz" type="VARCHAR" length="2" nullable="false" />
+    <column name="Konto_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="SH" type="VARCHAR" length="1" nullable="false" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="ESH" type="VARCHAR" length="1" nullable="false" />
+    <column name="EBetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Periode" />
+      <keycolumn name="Kz" />
+      <keycolumn name="Konto_Uid" />
+    </primarykey>
+  </table>
+  <table name="HH_Buchung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Soll_Valuta" type="DATE" nullable="false" />
+    <column name="Haben_Valuta" type="DATE" nullable="false" />
+    <column name="Kz" type="VARCHAR" length="1" nullable="true" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="EBetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Soll_Konto_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Haben_Konto_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="BText" type="VARCHAR" length="100" nullable="false" />
+    <column name="Beleg_Nr" type="VARCHAR" length="50" nullable="true" />
+    <column name="Beleg_Datum" type="DATE" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HH_Ereignis">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Kz" type="VARCHAR" length="1" nullable="true" />
+    <column name="Soll_Konto_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Haben_Konto_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="EText" type="VARCHAR" length="100" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HH_Konto">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Sortierung" type="VARCHAR" length="10" nullable="false" />
+    <column name="Art" type="VARCHAR" length="2" nullable="false" />
+    <column name="Kz" type="VARCHAR" length="1" nullable="true" />
+    <column name="Name" type="VARCHAR" length="50" nullable="false" />
+    <column name="Gueltig_Von" type="DATE" nullable="true" />
+    <column name="Gueltig_Bis" type="DATE" nullable="true" />
+    <column name="Periode_Von" type="INTEGER" nullable="false" />
+    <column name="Periode_Bis" type="INTEGER" nullable="false" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="EBetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HH_Periode">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Nr" type="INTEGER" nullable="false" />
+    <column name="Datum_Von" type="DATE" nullable="false" />
+    <column name="Datum_Bis" type="DATE" nullable="false" />
+    <column name="Art" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Nr" />
+    </primarykey>
+  </table>
+  <table name="HP_Behandlung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Patient_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Dauer" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Diagnose" type="VARCHAR" length="50" nullable="true" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Leistung_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Rechnung_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Mittel" type="VARCHAR" length="50" nullable="true" />
+    <column name="Potenz" type="VARCHAR" length="10" nullable="true" />
+    <column name="Dosierung" type="VARCHAR" length="100" nullable="true" />
+    <column name="Verordnung" type="VARCHAR" length="255" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Behandlung_Leistung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Behandlung_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Leistung_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Dauer" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Parameter" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Leistung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Ziffer" type="VARCHAR" length="10" nullable="false" />
+    <column name="Ziffer_Alt" type="VARCHAR" length="10" nullable="false" />
+    <column name="Beschreibung_Fett" type="VARCHAR" length="100" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="-1" nullable="false" />
+    <column name="Faktor" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Festbetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Fragen" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Leistungsgruppe">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Patient">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name1" type="VARCHAR" length="50" nullable="false" />
+    <column name="Vorname" type="VARCHAR" length="50" nullable="true" />
+    <column name="Geschlecht" type="VARCHAR" length="1" nullable="false" />
+    <column name="Geburt" type="DATE" nullable="true" />
+    <column name="Adresse1" type="VARCHAR" length="50" nullable="true" />
+    <column name="Adresse2" type="VARCHAR" length="50" nullable="true" />
+    <column name="Adresse3" type="VARCHAR" length="50" nullable="true" />
+    <column name="Rechnung_Patient_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status" type="VARCHAR" length="10" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Rechnung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Rechnungsnummer" type="VARCHAR" length="20" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Patient_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Diagnose" type="VARCHAR" length="50" nullable="false" />
+    <column name="Status_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="HP_Status">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Status" type="VARCHAR" length="10" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="40" nullable="false" />
+    <column name="Sortierung" type="INTEGER" nullable="false" />
+    <column name="Standard" type="INTEGER" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="MA_Mandant">
+    <column name="Nr" type="INTEGER" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="100" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Nr" />
+    </primarykey>
+  </table>
+  <table name="MA_Parameter">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Schluessel" type="VARCHAR" length="50" nullable="false" />
+    <column name="Wert" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Schluessel" />
+    </primarykey>
+  </table>
+  <table name="MO_Einteilung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Gottesdienst_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Messdiener_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Termin" type="DATE" nullable="false" />
+    <column name="Dienst" type="VARCHAR" length="50" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="MO_Gottesdienst">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Termin" type="DATE" nullable="false" />
+    <column name="Name" type="VARCHAR" length="50" nullable="false" />
+    <column name="Ort" type="VARCHAR" length="50" nullable="false" />
+    <column name="Profil_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status" type="VARCHAR" length="10" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="MO_Messdiener">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="50" nullable="false" />
+    <column name="Vorname" type="VARCHAR" length="50" nullable="true" />
+    <column name="Von" type="DATE" nullable="false" />
+    <column name="Bis" type="DATE" nullable="true" />
+    <column name="Adresse1" type="VARCHAR" length="50" nullable="true" />
+    <column name="Adresse2" type="VARCHAR" length="50" nullable="true" />
+    <column name="Adresse3" type="VARCHAR" length="50" nullable="true" />
+    <column name="Email" type="VARCHAR" length="40" nullable="true" />
+    <column name="Email2" type="VARCHAR" length="40" nullable="true" />
+    <column name="Telefon" type="VARCHAR" length="40" nullable="true" />
+    <column name="Telefon2" type="VARCHAR" length="40" nullable="true" />
+    <column name="Verfuegbarkeit" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Dienste" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Messdiener_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status" type="VARCHAR" length="10" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="MO_Profil">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="50" nullable="false" />
+    <column name="Alle" type="INTEGER" nullable="false" />
+    <column name="Dienste" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="SB_Ereignis">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Person_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Familie_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Typ" type="VARCHAR" length="4" nullable="false" />
+    <column name="Tag1" type="INTEGER" nullable="false" />
+    <column name="Monat1" type="INTEGER" nullable="false" />
+    <column name="Jahr1" type="INTEGER" nullable="false" />
+    <column name="Tag2" type="INTEGER" nullable="false" />
+    <column name="Monat2" type="INTEGER" nullable="false" />
+    <column name="Jahr2" type="INTEGER" nullable="false" />
+    <column name="Datum_Typ" type="VARCHAR" length="4" nullable="false" />
+    <column name="Ort" type="VARCHAR" length="120" nullable="true" />
+    <column name="Bemerkung" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Quelle_Uid" type="VARCHAR" length="12" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Person_Uid" />
+      <keycolumn name="Familie_Uid" />
+      <keycolumn name="Typ" />
+    </primarykey>
+  </table>
+  <table name="SB_Familie">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Mann_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Frau_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status1" type="INTEGER" nullable="false" />
+    <column name="Status2" type="INTEGER" nullable="false" />
+    <column name="Status3" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="SB_Kind">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Familie_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Kind_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Familie_Uid" />
+      <keycolumn name="Kind_Uid" />
+    </primarykey>
+  </table>
+  <table name="SB_Person">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="50" nullable="false" />
+    <column name="Vorname" type="VARCHAR" length="50" nullable="true" />
+    <column name="Geburtsname" type="VARCHAR" length="50" nullable="true" />
+    <column name="Geschlecht" type="VARCHAR" length="1" nullable="true" />
+    <column name="Titel" type="VARCHAR" length="50" nullable="true" />
+    <column name="Konfession" type="VARCHAR" length="20" nullable="true" />
+    <column name="Bemerkung" type="VARCHAR" length="255" nullable="true" />
+    <column name="Quelle_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Status1" type="INTEGER" nullable="false" />
+    <column name="Status2" type="INTEGER" nullable="false" />
+    <column name="Status3" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="SB_Quelle">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="255" nullable="false" />
+    <column name="Zitat" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Bemerkung" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Autor" type="VARCHAR" length="255" nullable="false" />
+    <column name="Status1" type="INTEGER" nullable="false" />
+    <column name="Status2" type="INTEGER" nullable="false" />
+    <column name="Status3" type="INTEGER" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="SO_Kurse">
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Open" type="DECIMAL(21,4)" nullable="false" />
+    <column name="High" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Low" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Close" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Price" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Bewertung" type="VARCHAR" length="-1" nullable="false" />
+    <column name="Trend" type="VARCHAR" length="-1" nullable="false" />
+    <column name="Bemerkung" type="VARCHAR" length="-1" nullable="false" />
+    <primarykey>
+      <keycolumn name="Datum" />
+    </primarykey>
+  </table>
+  <table name="TB_Eintrag">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Eintrag" type="VARCHAR" length="-1" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Replikation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Datum" />
+    </primarykey>
+  </table>
+  <table name="TB_Eintrag_Ort">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Ort_Uid" type="VARCHAR" length="36" nullable="false" />
+    <column name="Datum_Von" type="DATE" nullable="false" />
+    <column name="Datum_Bis" type="DATE" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Ort_Uid" />
+      <keycolumn name="Datum_Von" />
+      <keycolumn name="Datum_Bis" />
+    </primarykey>
+  </table>
+  <table name="TB_Ort">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="36" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Breite" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Laenge" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Hoehe" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Abrechnung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Haus_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Mieter_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Datum_Von" type="DATE" nullable="false" />
+    <column name="Datum_Bis" type="DATE" nullable="false" />
+    <column name="Schluessel" type="VARCHAR" length="10" nullable="false" />
+    <column name="Beschreibung" type="VARCHAR" length="255" nullable="true" />
+    <column name="Wert" type="VARCHAR" length="255" nullable="true" />
+    <column name="Betrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Datum" type="DATE" nullable="true" />
+    <column name="Reihenfolge" type="VARCHAR" length="10" nullable="false" />
+    <column name="Status" type="VARCHAR" length="1" nullable="false" />
+    <column name="Funktion" type="VARCHAR" length="10" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Buchung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Schluessel" type="VARCHAR" length="10" nullable="false" />
+    <column name="Haus_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Mieter_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Ereignis">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Schluessel" type="VARCHAR" length="10" nullable="true" />
+    <column name="Haus_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Mieter_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Haus">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="40" nullable="false" />
+    <column name="Strasse" type="VARCHAR" length="40" nullable="true" />
+    <column name="Plz" type="VARCHAR" length="10" nullable="true" />
+    <column name="Ort" type="VARCHAR" length="40" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Konto">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Schluessel" type="VARCHAR" length="10" nullable="true" />
+    <column name="Haus_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Mieter_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Miete">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Miete" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Nebenkosten" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Garage" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Heizung" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Personen" type="INTEGER" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Mieter">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Wohnung_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Name" type="VARCHAR" length="40" nullable="false" />
+    <column name="Vorname" type="VARCHAR" length="40" nullable="true" />
+    <column name="Anrede" type="VARCHAR" length="40" nullable="true" />
+    <column name="Einzugdatum" type="DATE" nullable="true" />
+    <column name="Auszugdatum" type="DATE" nullable="true" />
+    <column name="Wohnung_Qm" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Wohnung_Grundmiete" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Wohnung_Kaution" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Wohnung_Antenne" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Status" type="INTEGER" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="VM_Wohnung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Haus_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="40" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="WP_Anlage">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Wertpapier_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Parameter" type="VARCHAR" length="-1" nullable="true" extension="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="WP_Buchung">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Wertpapier_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Anlage_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Zahlungsbetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Rabattbetrag" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Anteile" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Zinsen" type="DECIMAL(21,4)" nullable="false" />
+    <column name="BText" type="VARCHAR" length="100" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" extension="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="WP_Konfiguration">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Parameter" type="VARCHAR" length="-1" nullable="false" extension="true" />
+    <column name="Status" type="VARCHAR" length="10" nullable="false" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+  <table name="WP_Stand">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Wertpapier_Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Datum" type="DATE" nullable="false" />
+    <column name="Stueckpreis" type="DECIMAL(21,4)" nullable="false" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Wertpapier_Uid" />
+      <keycolumn name="Datum" />
+    </primarykey>
+  </table>
+  <table name="WP_Wertpapier">
+    <column name="Mandant_Nr" type="INTEGER" nullable="false" />
+    <column name="Uid" type="VARCHAR" length="35" nullable="false" />
+    <column name="Bezeichnung" type="VARCHAR" length="50" nullable="false" />
+    <column name="Kuerzel" type="VARCHAR" length="20" nullable="false" />
+    <column name="Parameter" type="VARCHAR" length="-1" nullable="true" extension="true" />
+    <column name="Datenquelle" type="VARCHAR" length="35" nullable="false" />
+    <column name="Status" type="VARCHAR" length="10" nullable="false" />
+    <column name="Relation_Uid" type="VARCHAR" length="35" nullable="true" />
+    <column name="Notiz" type="VARCHAR" length="-1" nullable="true" />
+    <column name="Angelegt_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Angelegt_Am" type="TIMESTAMP" nullable="true" />
+    <column name="Geaendert_Von" type="VARCHAR" length="20" nullable="true" />
+    <column name="Geaendert_Am" type="TIMESTAMP" nullable="true" />
+    <primarykey>
+      <keycolumn name="Mandant_Nr" />
+      <keycolumn name="Uid" />
+    </primarykey>
+  </table>
+</tables>

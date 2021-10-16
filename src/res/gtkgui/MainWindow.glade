@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
+<interface>
+  <requires lib="gtk+" version="3.4"/>
+  <object class="GtkApplicationWindow" id="MainWindow">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Main.title</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkGrid" id="grid">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <child>
+          <object class="GtkMenuBar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label">Menu.file</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="MenuUndo">
+                        <property name="label">gtk-undo</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="OnMenuUndo" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="MenuRedo">
+                        <property name="label">gtk-redo</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="OnMenuRedo" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuClients">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.clients</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuClients" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuUsers">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.users</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuUsers" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuBackups">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.backups</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuBackups" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="MenuQuit">
+                        <property name="label">gtk-quit</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="OnMenuQuit" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.user</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuLogin">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.login</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuLogin" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuLogout">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.logout</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuLogout" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuPwchange">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.pwchange</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPwchange" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuOptions">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.options</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuOptions" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuDialogs">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.dialogs</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuDialogs" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuReset">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.reset</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuReset" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.private1</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuDiary">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.diary</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuDiary" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuNotes">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.notes</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuNotes" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuPersons">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.persons</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPersons" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuMileages">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.mileages</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuMileages" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuBikes">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.bikes</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuBikes" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuBooks">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.books</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuBooks" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuAuthors">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.authors</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuAuthors" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuSeries">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.series</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuSeries" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuStatistics">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.statistics</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuStatistics" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuSudoku">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.sudoku</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuSudoku" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuDetective">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.detective</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuDetective" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.household2</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuBookings">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.bookings</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuBookings" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuEvents">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.events</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuEvents" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuAccounts">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.accounts</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuAccounts" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuPeriods">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.periods</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPeriods" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuFinalbalance">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.finalbalance</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuFinalbalance" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuPlbalance">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.plbalance</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPlbalance" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuOpeningbalance">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.openingbalance</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuOpeningbalance" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.pedigree5</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuAncestors">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.ancestors</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuAncestors" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuFamilies">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.families</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuFamilies" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuSources">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.sources</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuSources" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.stock6</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuStocks">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.stocks</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuStocks" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuConfigurations">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.configurations</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuConfigurations" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuChart">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.chart</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuChart" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuInvestments">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.investments</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuInvestments" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuBookings3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.bookings3</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuBookings3" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuPrices">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.prices</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPrices" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Menu.help</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="MenuAbout">
+                        <property name="label">gtk-about</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="OnMenuAbout" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="MenuHelp2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.help2</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuHelp2" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar" id="Statusbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_start">10</property>
+            <property name="margin_end">10</property>
+            <property name="margin_top">6</property>
+            <property name="margin_bottom">6</property>
+            <property name="hexpand">True</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">2</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkNotebook" id="Notebook">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child type="tab">
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
