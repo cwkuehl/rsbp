@@ -8,6 +8,7 @@ use crate::{
         bin,
         controls::{self, DateCallback, DateEvent},
         main_window::MainWindow,
+        ui_tools,
     },
     res::messages::M,
     services::diary_service,
@@ -131,7 +132,7 @@ impl Tb100Diary {
             glib::clone!(@strong wref => move |_| Self::on_save(&mut wref.borrow_mut()) ),
         );
         w.positions.connect_row_activated(
-            glib::clone!(@strong w => move |_,_,_| Self::on_positions_activated(&w) ),
+            glib::clone!(@strong wref => move |_,_,_| Self::on_positions_activated(&mut wref.borrow_mut()) ),
         );
         w.new.connect_clicked(
             glib::clone!(@strong wref => move |_| Self::on_new(&mut wref.borrow_mut()) ),
@@ -343,12 +344,24 @@ impl Tb100Diary {
         self.load_month(d);
     }
 
-    /// TODO Handle position.
+    /// Handle position.
     fn on_positions_activated(&self) {
         let r = bin::get_text_tv(&self.positions, false, 0);
         if bin::get(&r, Some(&self.parent)) {
-            if let Ok(Some(_uid)) = r {
-                // TODO UiTools.StartFile($"https://www.openstreetmap.org/#map=19/{Functions.ToString(p.Breite, 5, Functions.CultureInfoEn)}/{Functions.ToString(p.Laenge, 5, Functions.CultureInfoEn)}");
+            if let Ok(Some(uid)) = r {
+                if let Some(p) = self
+                    .position_list
+                    .iter()
+                    .filter(|x| x.ort_uid == uid)
+                    .collect::<Vec<&TbEintragOrtExt>>()
+                    .first()
+                {
+                    let s = format!(
+                        "https://www.openstreetmap.org/#map=19/{}/{}",
+                        p.breite, p.laenge
+                    );
+                    bin::get(&ui_tools::start_url(s.as_str()), Some(&self.parent));
+                }
             }
         }
     }

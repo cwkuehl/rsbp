@@ -58,6 +58,7 @@ diesel = { version = "*", features = ["sqlite", "chrono"] }
 rustls = { version = "*" }
 rustls-pemfile = { version = "*" }
 mio = { version = "*", features = ["os-poll", "tcp"] }
+webbrowser = { version = "*" } # Start Browser with URL.
 
 [dev-dependencies]
 quick-xml = { version = "*" }

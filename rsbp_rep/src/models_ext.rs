@@ -1,7 +1,6 @@
-use chrono::{NaiveDate, NaiveDateTime};
-
 use crate::models::{AdPerson, Benutzer};
 use crate::res::M;
+use chrono::{NaiveDate, NaiveDateTime};
 
 impl AdPerson {
     /// Get Name as string.
