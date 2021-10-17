@@ -1,5 +1,5 @@
 use super::DbContext;
-use crate::{config::RsbpError, services::undo::UndoEntry, Result};
+use crate::{base::functions, config::RsbpError, services::undo::UndoEntry, Result};
 use chrono::{NaiveDate, NaiveDateTime};
 use diesel::prelude::*;
 use rsbp_rep::{
@@ -232,14 +232,10 @@ pub fn delete(db: &mut DbContext, b: &TbEintragOrt) -> Result<()> {
 }
 
 /// Get list.
-pub fn get_list_ext(
-    db: &DbContext,
-    mandant_nr_: &i32,
-    date: &NaiveDate,
-) -> Result<Vec<TbEintragOrtExt>> {
+pub fn get_list_ext2(db: &DbContext, date: &NaiveDate) -> Result<Vec<TbEintragOrtExt>> {
     let join = TB_EINTRAG_ORT::table
         .filter(
-            TB_EINTRAG_ORT::mandant_nr.eq(mandant_nr_).and(
+            TB_EINTRAG_ORT::mandant_nr.eq(db.daten.mandant_nr).and(
                 TB_EINTRAG_ORT::datum_von
                     .le(date)
                     .and(TB_EINTRAG_ORT::datum_bis.ge(date)),
@@ -250,6 +246,11 @@ pub fn get_list_ext(
                 .eq(TB_EINTRAG_ORT::mandant_nr)
                 .and(TB_ORT::uid.eq(TB_EINTRAG_ORT::ort_uid))),
         )
+        .order_by((
+            TB_EINTRAG_ORT::mandant_nr,
+            TB_EINTRAG_ORT::ort_uid,
+            TB_EINTRAG_ORT::datum_von,
+        ))
         .load::<(TbEintragOrt, TbOrt)>(db.c)
         .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
     let mut l: Vec<TbEintragOrtExt> = Vec::new();
@@ -271,4 +272,43 @@ pub fn get_list_ext(
         });
     }
     Ok(l)
+}
+
+/// Get list.
+pub fn get_list_ext(
+    db: &DbContext,
+    from: &NaiveDate,
+    add_days: &i32,
+    to: Option<&NaiveDate>,
+    puid: Option<&String>,
+) -> Result<Vec<TbEintragOrt>> {
+    let mut q = TB_EINTRAG_ORT::table
+        .into_boxed()
+        .filter(TB_EINTRAG_ORT::mandant_nr.eq(db.daten.mandant_nr));
+    let f = functions::nd_add_dmy(from, *add_days, 0, 0).unwrap_or(*from);
+    if let Some(t) = to {
+        q = q.filter(
+            TB_EINTRAG_ORT::datum_von
+                .le(t)
+                .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
+        );
+    } else {
+        q = q.filter(
+            TB_EINTRAG_ORT::datum_von
+                .le(f)
+                .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
+        );
+    }
+    if let Some(id) = puid {
+        q = q.filter(TB_EINTRAG_ORT::ort_uid.eq(id));
+    }
+    let list = q
+        .order_by((
+            TB_EINTRAG_ORT::mandant_nr,
+            TB_EINTRAG_ORT::ort_uid,
+            TB_EINTRAG_ORT::datum_von,
+        ))
+        .load::<TbEintragOrt>(db.c)
+        .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
+    Ok(list)
 }

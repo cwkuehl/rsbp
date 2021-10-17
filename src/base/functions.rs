@@ -232,8 +232,8 @@ pub fn ostr_to_ondt(s: Option<&str>) -> Option<NaiveDateTime> {
     None
 }
 
-/// Addiert Tage zu optionalem Datum.
-/// * ond: Zu konvertierendes Datum.
+/// Add days to optional date.
+/// * ond: Affected date.
 pub fn ond_add_days(ond: &Option<NaiveDate>, days: i32) -> Option<NaiveDate> {
     if let Some(d) = ond {
         let d2 = NaiveDate::from_num_days_from_ce_opt(d.num_days_from_ce() + days);
@@ -280,8 +280,26 @@ pub fn nd_add_dmy(nd: &NaiveDate, days: i32, months: i32, years: i32) -> Option<
     None
 }
 
-/// Wandelt optionales Datum in einen String um.
-/// * ondt: Zu konvertierendes Datum.
+/// Get minimum of two dates.
+pub fn min_date(d1: &NaiveDate, d2: &NaiveDate) -> NaiveDate {
+    let m = match d1 < d2 {
+        true => d1,
+        _ => d2,
+    };
+    m.clone()
+}
+
+/// Get maximum of two dates.
+pub fn max_date(d1: &NaiveDate, d2: &NaiveDate) -> NaiveDate {
+    let m = match d1 > d2 {
+        true => d1,
+        _ => d2,
+    };
+    m.clone()
+}
+
+/// Convert optional date to string.
+/// * ondt: Affected date.
 pub fn ondt_to_str<'a>(ondt: &Option<NaiveDateTime>) -> String {
     if let Some(d) = ondt {
         return d.format("%Y-%m-%d %H:%M:%S").to_string();
@@ -289,7 +307,7 @@ pub fn ondt_to_str<'a>(ondt: &Option<NaiveDateTime>) -> String {
     "".into()
 }
 
-/// Liefert eine GUID.
+/// Return a GUID.
 pub fn get_uid() -> String {
     let guid = uuid::Uuid::new_v4();
     guid.to_string()

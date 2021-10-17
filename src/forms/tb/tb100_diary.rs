@@ -88,8 +88,9 @@ pub struct Tb100Diary {
     after3: gtk::TextView,
     copy_string: String,
     loaded: bool,
-    entry_old: TbEintrag,
     position_list: Vec<TbEintragOrtExt>,
+    entry_old: TbEintrag,
+    position_list_old: Vec<TbEintragOrtExt>,
 }
 
 impl DateCallback for Tb100Diary {
@@ -241,6 +242,7 @@ impl Tb100Diary {
             after3: builder.object::<gtk::TextView>("after3").unwrap(),
             copy_string: String::new(),
             loaded: false,
+            position_list: Vec::new(),
             entry_old: TbEintrag {
                 mandant_nr: 0,
                 datum: NaiveDate::from_yo(0, 1),
@@ -251,7 +253,7 @@ impl Tb100Diary {
                 geaendert_von: None,
                 replikation_uid: None,
             },
-            position_list: Vec::new(),
+            position_list_old: Vec::new(),
         };
         w.window.connect_destroy(|_| {
             println!("TB100 Tagebuch destroy");
@@ -352,7 +354,7 @@ impl Tb100Diary {
                 if let Some(p) = self
                     .position_list
                     .iter()
-                    .filter(|x| x.ort_uid == uid)
+                    .filter(|a| a.ort_uid == uid)
                     .collect::<Vec<&TbEintragOrtExt>>()
                     .first()
                 {
@@ -368,42 +370,97 @@ impl Tb100Diary {
 
     /// TODO Handle new.
     fn on_new(&mut self) {
-        //
+        // Start(typeof(TB210Position), TB210_title, DialogTypeEnum.New, null, csbpparent: this);
     }
 
     /// TODO Handle add.
     fn on_add(&mut self) {
-        //
+        if let Some(uid) = bin::get_text_cb(&self.position) {
+            if let Some(_p) = self
+                .position_list
+                .iter()
+                .filter(|a| a.ort_uid == uid)
+                .collect::<Vec<&TbEintragOrtExt>>()
+                .first()
+            {
+                // var p = new Tuple<string, DateTime>(o.Ort_Uid, o.Datum_Bis);
+                // var to = Start(typeof(TB110Date), TB110_title, DialogTypeEnum.Edit, p, modal: true, csbpparent: this) as DateTime?;
+                // if (to.HasValue)
+                // {
+                //   if (to.Value >= date.ValueNn)
+                //     o.Datum_Bis = to.Value;
+                //   else
+                //     o.Datum_Von = to.Value;
+                // }
+                // InitPositions();
+                return;
+            }
+            // var k = Get(FactoryService.DiaryService.GetPosition(ServiceDaten, uid));
+            // if (k != null)
+            // {
+            //   var p = new TbEintragOrt
+            //   {
+            //     Mandant_Nr = k.Mandant_Nr,
+            //     Ort_Uid = k.Uid,
+            //     Datum_Von = date.ValueNn,
+            //     Datum_Bis = date.ValueNn,
+            //     Bezeichnung = k.Bezeichnung,
+            //     Breite = k.Breite,
+            //     Laenge = k.Laenge,
+            //     Hoehe = k.Hoehe,
+            //   };
+            //   PositionList.Add(p);
+            //   InitPositions();
+            // }
+        }
     }
 
     /// TODO Handle posbefore.
     fn on_posbefore(&mut self) {
-        //
+        // var yd = date.ValueNn.AddDays(-1);
+        // var r = FactoryService.DiaryService.GetEntry(ServiceDaten, yd, true);
+        // if (r.Ok && r.Ergebnis != null)
+        // {
+        //   foreach (var p in r.Ergebnis.Positions ?? new List<TbEintragOrt>())
+        //   {
+        //     if (PositionList.FirstOrDefault(a => a.Ort_Uid == p.Ort_Uid) == null)
+        //     {
+        //       if (p.Datum_Bis == yd)
+        //         p.Datum_Bis = p.Datum_Bis.AddDays(1);
+        //       PositionList.Add(p);
+        //     }
+        //   }
+        //   InitPositions();
+        // }
     }
 
     /// TODO Handle remove.
     fn on_remove(&mut self) {
-        //
+        // var uid = GetText(positions);
+        // if (string.IsNullOrEmpty(uid) || !PositionList.Any(a => a.Ort_Uid == uid))
+        //   return;
+        // PositionList = PositionList.Where(a => a.Ort_Uid != uid).ToList();
+        // InitPositions();
     }
 
     /// TODO Handle first.
     fn on_first(&mut self) {
-        //
+        // SearchEntry(SearchDirectionEnum.First);
     }
 
     /// TODO Handle back.
     fn on_back(&mut self) {
-        //
+        // SearchEntry(SearchDirectionEnum.Back);
     }
 
     /// TODO Handle forward.
     fn on_forward(&mut self) {
-        //
+        // SearchEntry(SearchDirectionEnum.Forward);
     }
 
     /// TODO Handle last.
     fn on_last(&mut self) {
-        //
+        // SearchEntry(SearchDirectionEnum.Last);
     }
 
     /// Handle clear.
@@ -452,7 +509,8 @@ impl Tb100Diary {
             let de = daten.config.is_de();
             let mut errors = Vec::<String>::new();
             let mut entry = String::new();
-            let mut list: Vec<TbEintragOrtExt> = Vec::new();
+            self.position_list.clear();
+            self.position_list_old.clear();
             if let Some(d1) = functions::nd_add_dmy(&d, -1, 0, 0) {
                 if let Some(tb) =
                     crate::config::get(&mut errors, &diary_service::get_entry(&daten, &d1))
@@ -499,12 +557,13 @@ impl Tb100Diary {
                 &diary_service::get_entry_position_list(&daten, &d),
             ) {
                 for p in plist {
-                    list.push(p.clone());
+                    self.position_list.push(p.clone());
+                    self.position_list_old.push(p.clone());
                 }
             }
             self.entry_old.datum = d;
-            self.init_positions(&Some(list));
             bin::set_text_textview(&self.entry, &Some(self.entry_old.eintrag.to_string()));
+            self.init_positions();
             entry = String::new();
             if let Some(d1) = functions::nd_add_dmy(&d, 1, 0, 0) {
                 if let Some(tb) =
@@ -540,13 +599,7 @@ impl Tb100Diary {
     }
 
     /// Init positions.
-    fn init_positions(&mut self, plist: &Option<Vec<TbEintragOrtExt>>) {
-        if let Some(list) = plist {
-            self.position_list.clear();
-            for p in list {
-                self.position_list.push(p.clone());
-            }
-        }
+    fn init_positions(&mut self) {
         let daten = services::get_daten();
         let de = daten.config.is_de();
         let mut values = Vec::<Vec<String>>::new();
@@ -593,15 +646,31 @@ impl Tb100Diary {
         if save && self.loaded {
             // Alten Eintrag von vorher merken.
             let old = self.entry_old.eintrag.to_string();
-            // var p0 = EntryOld.Positions.OrderBy(a => a.Ort_Uid).Select(a => a.Hash()).Aggregate("", (c, n) => c + n);
-            // var p = PositionList.OrderBy(a => a.Ort_Uid).Select(a => a.Hash()).Aggregate("", (c, n) => c + n);
+            self.position_list.sort_by(|a, b| a.ort_uid.cmp(&b.ort_uid));
+            let p = self
+                .position_list
+                .iter()
+                .map(|a| format!("{} {} {}", a.ort_uid, a.datum_von, a.datum_bis))
+                .collect::<Vec<String>>()
+                .join(",");
+            self.position_list_old
+                .sort_by(|a, b| a.ort_uid.cmp(&b.ort_uid));
+            let p0 = self
+                .position_list_old
+                .iter()
+                .map(|a| format!("{} {} {}", a.ort_uid, a.datum_von, a.datum_bis))
+                .collect::<Vec<String>>()
+                .join(",");
             // Nur speichern, wenn etwas geändert ist.
             let new = bin::get_text_textview(&self.entry).unwrap_or(String::new());
-            if old == "" || old != new {
-                //|| Functions.CompString(p0, p) != 0
-                //   var pos = PositionList.Select(a => new Tuple<string, DateTime, DateTime>(a.Ort_Uid, a.Datum_Von, a.Datum_Bis)).ToList();
+            if old == "" || old != new || p != p0 {
                 let daten = services::get_daten();
-                let r = diary_service::save_entry(&daten, &self.entry_old.datum, &new); // , pos);
+                let r = diary_service::save_entry(
+                    &daten,
+                    &self.entry_old.datum,
+                    &new,
+                    &self.position_list,
+                ); // , pos);
                 bin::get(&r, Some(&self.parent));
             }
         }

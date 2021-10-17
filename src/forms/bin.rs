@@ -300,7 +300,6 @@ fn add_columns_sort<'a>(
         tv.append_column(&col);
     }
     if let Some(vlist) = values {
-        functions::mach_nichts();
         for v in vlist {
             let l = v.len() as u32;
             let vv: Vec<_> = (0..l).zip(v.iter().map(|a| a as &dyn ToValue)).collect();
