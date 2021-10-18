@@ -330,11 +330,22 @@ fn optimize_positions<'a>(
     Ok(())
 }
 
+/// Get a position.
+/// * daten: Service data for database access.
+/// * uid: Affected position ID.
+/// * returns: Position or possibly errors.
+pub fn get_position<'a>(daten: &'a ServiceDaten, uid: &String) -> Result<Option<TbOrt>> {
+    let c = reps::establish_connection(daten);
+    let db = DbContext::new(daten, &c);
+    let e = reps::tb_ort::get(&db, &daten.mandant_nr, &uid)?;
+    Ok(e)
+}
+
 /// Get a list of positions.
 /// * daten: Service data for database access.
 /// * puid: Affected position ID.
 /// * text: Affected text.
-/// * returns: Diary entry or possibly errors.
+/// * returns: Position list or possibly errors.
 pub fn get_position_list<'a>(
     daten: &'a ServiceDaten,
     puid: &Option<String>,

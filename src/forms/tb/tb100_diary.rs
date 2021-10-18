@@ -395,23 +395,31 @@ impl Tb100Diary {
                 // InitPositions();
                 return;
             }
-            // var k = Get(FactoryService.DiaryService.GetPosition(ServiceDaten, uid));
-            // if (k != null)
-            // {
-            //   var p = new TbEintragOrt
-            //   {
-            //     Mandant_Nr = k.Mandant_Nr,
-            //     Ort_Uid = k.Uid,
-            //     Datum_Von = date.ValueNn,
-            //     Datum_Bis = date.ValueNn,
-            //     Bezeichnung = k.Bezeichnung,
-            //     Breite = k.Breite,
-            //     Laenge = k.Laenge,
-            //     Hoehe = k.Hoehe,
-            //   };
-            //   PositionList.Add(p);
-            //   InitPositions();
-            // }
+            let daten = services::get_daten();
+            let r0 = diary_service::get_position(&daten, &uid);
+            if !bin::get(&r0, Some(&self.parent)) {
+                return;
+            }
+            let od = bin::get_date_grid(&self.date);
+            if let (Ok(Some(k)), Some(d)) = (r0, od) {
+                let p = TbEintragOrtExt {
+                    mandant_nr: k.mandant_nr,
+                    ort_uid: k.uid,
+                    datum_von: d,
+                    datum_bis: d,
+                    angelegt_von: None,
+                    angelegt_am: None,
+                    geaendert_von: None,
+                    geaendert_am: None,
+                    bezeichnung: k.bezeichnung,
+                    breite: k.breite,
+                    laenge: k.laenge,
+                    hoehe: k.hoehe,
+                    notiz: String::new(),
+                };
+                self.position_list.push(p);
+                self.init_positions();
+            }
         }
     }
 
@@ -502,7 +510,7 @@ impl Tb100Diary {
         self.search9.set_text("%%");
     }
 
-    /// TODO Load entries.
+    /// Load entries.
     fn load_entries(&mut self, date: Option<NaiveDate>) -> crate::Result<()> {
         if let Some(d) = date {
             let daten = services::get_daten();
@@ -640,7 +648,7 @@ impl Tb100Diary {
         bin::set_month_grid(&self.date, &Some(m), false);
     }
 
-    /// TODO Edit entries.
+    /// Edit entries.
     fn update_entries(&mut self, save: bool, load: bool) {
         // Rekursion vermeiden
         if save && self.loaded {
@@ -670,7 +678,7 @@ impl Tb100Diary {
                     &self.entry_old.datum,
                     &new,
                     &self.position_list,
-                ); // , pos);
+                );
                 bin::get(&r, Some(&self.parent));
             }
         }
