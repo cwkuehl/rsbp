@@ -442,13 +442,17 @@ impl Tb100Diary {
         // }
     }
 
-    /// TODO Handle remove.
+    /// Handle remove.
     fn on_remove(&mut self) {
-        // var uid = GetText(positions);
-        // if (string.IsNullOrEmpty(uid) || !PositionList.Any(a => a.Ort_Uid == uid))
-        //   return;
-        // PositionList = PositionList.Where(a => a.Ort_Uid != uid).ToList();
-        // InitPositions();
+        let r = bin::get_text_tv(&self.positions, false, 0);
+        if bin::get(&r, Some(&self.parent)) {
+            if let Ok(Some(uid)) = r {
+                if let Some(p) = self.position_list.iter().position(|a| a.ort_uid == uid) {
+                    self.position_list.remove(p);
+                    self.init_positions();
+                }
+            }
+        }
     }
 
     /// TODO Handle first.

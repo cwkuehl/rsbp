@@ -124,9 +124,7 @@ pub fn save_entry<'a>(
                 reps::tb_eintrag_ort::get_list_ext(&db, &from, &0, Some(&to), Some(&puid))?;
             let ovop = listep.first();
             if let Some(p) = liste.iter().position(|a| a.ort_uid == puid) {
-                if p > 0 {
-                    liste.remove(p); // nicht mehr löschen
-                }
+                liste.remove(p); // nicht mehr löschen
             }
             if listep.is_empty() || ovop.is_none() {
                 // Zeitraum leer
