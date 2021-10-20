@@ -1,7 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
 use crate::{
-    apis::services,
+    apis::{enums::SearchDirectionEnum, services},
     base::functions,
     config::{self, RsbpConfig, RsbpError},
     forms::{
@@ -314,7 +314,7 @@ impl Tb100Diary {
 
     /// Behandlung von Copy.
     fn on_copy(&mut self) {
-        self.copy_string = bin::get_text_textview(&self.entry).unwrap_or(String::new());
+        self.copy_string = bin::get_text_textview(&self.entry);
     }
 
     /// Behandlung von Paste.
@@ -455,24 +455,24 @@ impl Tb100Diary {
         }
     }
 
-    /// TODO Handle first.
+    /// Handle first.
     fn on_first(&mut self) {
-        // SearchEntry(SearchDirectionEnum.First);
+        self.search_entry(&SearchDirectionEnum::First);
     }
 
-    /// TODO Handle back.
+    /// Handle back.
     fn on_back(&mut self) {
-        // SearchEntry(SearchDirectionEnum.Back);
+        self.search_entry(&SearchDirectionEnum::Back);
     }
 
-    /// TODO Handle forward.
+    /// Handle forward.
     fn on_forward(&mut self) {
-        // SearchEntry(SearchDirectionEnum.Forward);
+        self.search_entry(&SearchDirectionEnum::Forward);
     }
 
-    /// TODO Handle last.
+    /// Handle last.
     fn on_last(&mut self) {
-        // SearchEntry(SearchDirectionEnum.Last);
+        self.search_entry(&SearchDirectionEnum::Last);
     }
 
     /// Handle clear.
@@ -512,6 +512,31 @@ impl Tb100Diary {
         self.search7.set_text("%%");
         self.search8.set_text("%%");
         self.search9.set_text("%%");
+    }
+
+    /// Search next entry
+    fn search_entry(&mut self, dir: &SearchDirectionEnum) {
+        self.update_entries(true, false);
+        let daten = services::get_daten();
+        let date = bin::get_date_grid(&self.date);
+        let search = [
+            bin::get_text_entry(&self.search1),
+            bin::get_text_entry(&self.search2),
+            bin::get_text_entry(&self.search3),
+            bin::get_text_entry(&self.search4),
+            bin::get_text_entry(&self.search5),
+            bin::get_text_entry(&self.search6),
+            bin::get_text_entry(&self.search7),
+            bin::get_text_entry(&self.search8),
+            bin::get_text_entry(&self.search9),
+        ];
+        let d0 = diary_service::search_date(&daten, dir, &date, &search);
+        if bin::get(&d0, Some(&self.parent)) {
+            if let Ok(Some(d)) = d0 {
+                bin::set_date_grid(&self.date, &Some(d), true);
+                self.update_entries(false, true);
+            }
+        }
     }
 
     /// Load entries.
@@ -674,7 +699,7 @@ impl Tb100Diary {
                 .collect::<Vec<String>>()
                 .join(",");
             // Nur speichern, wenn etwas geändert ist.
-            let new = bin::get_text_textview(&self.entry).unwrap_or(String::new());
+            let new = bin::get_text_textview(&self.entry);
             if old == "" || old != new || p != p0 {
                 let daten = services::get_daten();
                 let r = diary_service::save_entry(

@@ -2,7 +2,12 @@ use super::{
     reps::{self, DbContext},
     undo::UndoRedoStack,
 };
-use crate::{apis::services::ServiceDaten, base::functions, config::RsbpError, Result};
+use crate::{
+    apis::{enums::SearchDirectionEnum, services::ServiceDaten},
+    base::functions,
+    config::RsbpError,
+    Result,
+};
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use diesel::Connection;
 use rsbp_rep::{
@@ -353,4 +358,23 @@ pub fn get_position_list<'a>(
     let db = DbContext::new(daten, &c);
     let e = reps::tb_ort::get_list_ext(&db, &daten.mandant_nr, puid, text)?;
     Ok(e)
+}
+
+/// TODO Search for the date of fitting entry.
+/// * daten: Service data for database access.
+/// * dir: Affected direction.
+/// * date: Affected base date.
+/// * search: Affected search strings.
+/// * returns: Position list or possibly errors.
+pub fn search_date<'a>(
+    _daten: &'a ServiceDaten,
+    _dir: &SearchDirectionEnum,
+    date: &Option<NaiveDate>,
+    _search: &[String; 9],
+) -> Result<Option<NaiveDate>> {
+    // let c = reps::establish_connection(daten);
+    // let db = DbContext::new(daten, &c);
+    //let e = reps::tb_ort::get_list_ext(&db, &daten.mandant_nr, puid, text)?;
+    //Ok(e)
+    Ok(functions::ond_add_days(date, 2))
 }

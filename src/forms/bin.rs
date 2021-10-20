@@ -8,9 +8,9 @@ use chrono::NaiveDate;
 use glib::object::Cast;
 use glib::{GString, Object, Value};
 use gtk::{
-    prelude::*, Builder, ButtonsType, ComboBoxText, Container, Dialog, DialogFlags, Grid, Label,
-    MessageDialog, MessageType, RadioButton, SortColumn, SortType, TextView, TreeModelSort,
-    TreeStore, TreeView, TreeViewColumn, Window,
+    prelude::*, Builder, ButtonsType, ComboBoxText, Container, Dialog, DialogFlags, Entry, Grid,
+    Label, MessageDialog, MessageType, RadioButton, SortColumn, SortType, TextView, TreeModelSort,
+    TreeStore, TreeView, TreeViewColumn, WidgetHelpType, Window,
 };
 use std::{borrow::Cow, cmp::Ordering};
 
@@ -432,7 +432,7 @@ pub fn set_text_tv(tv: &TreeView, v: Option<String>) -> Result<bool, RsbpError> 
 /// Get the value of a TextView.
 /// * tv: Affected textview.
 /// * returns: Value or error.
-pub fn get_text_textview(tv: &TextView) -> Option<String> {
+pub fn _get_otext_textview(tv: &TextView) -> Option<String> {
     if let Some(buffer) = tv.buffer() {
         let (s, e) = buffer.bounds();
         if let Some(v) = buffer.text(&s, &e, true) {
@@ -440,6 +440,19 @@ pub fn get_text_textview(tv: &TextView) -> Option<String> {
         }
     }
     return None;
+}
+
+/// Get the value of a TextView.
+/// * tv: Affected textview.
+/// * returns: Value or error.
+pub fn get_text_textview(tv: &TextView) -> String {
+    if let Some(buffer) = tv.buffer() {
+        let (s, e) = buffer.bounds();
+        if let Some(v) = buffer.text(&s, &e, true) {
+            return v.to_string();
+        }
+    }
+    String::new()
 }
 
 /// Set the value of a TextView.
@@ -453,6 +466,13 @@ pub fn set_text_textview(tv: &TextView, s: &Option<String>) {
             buffer.set_text("");
         };
     }
+}
+
+/// Get the value of a Entry.
+/// * tv: Affected entry.
+/// * returns: Value as string.
+pub fn get_text_entry(tv: &Entry) -> String {
+    tv.text().as_str().to_string()
 }
 
 /// Set the data of a RadioButton group.
@@ -586,7 +606,8 @@ pub fn set_month_grid(grid: &Grid, v: &Option<Vec<bool>>, emit_signal: bool) {
     }
     if emit_signal {
         // Trick: Signal by non existent popup menu.
-        grid.emit_popup_menu();
+        // grid.emit_popup_menu();
+        grid.emit_show_help(WidgetHelpType::__Unknown(1));
     }
 }
 

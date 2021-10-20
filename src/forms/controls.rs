@@ -135,9 +135,6 @@ impl Date {
         };
         let cb = callback.clone();
         let d2 = Rc::new(RefCell::new(d));
-        // date.connect_key_release_event(glib::clone!(@strong cb, @strong d2 => move |_,_| {
-        //     cb.borrow_mut().date_callback(&d2.borrow_mut().on_date());
-        //     Inhibit(false) }));
         down.connect_clicked(
             glib::clone!(@strong cb, @strong d2 => move |_| { d2.borrow_mut().on_down(); }),
         );
@@ -187,12 +184,20 @@ impl Date {
             @strong cb, @strong d2 => move |x| {
             let date = bin::get_date_grid(x);
             d2.borrow_mut().set_value(date, 1);
-            if let Some(month) = bin::get_month_grid(x) {
-              bin::set_month_grid(x, &None, false);
-              d2.borrow().mark_month(&month);
-            }
+            // if let Some(month) = bin::get_month_grid(x) {
+            //     bin::set_month_grid(x, &None, false);
+            //     d2.borrow().mark_month(&month);
+            // }
             false
         }));
+        // g.connect_show_help(glib::clone!(
+        //     @strong cb, @strong d2 => move |x,_type| {
+        //     if let Some(month) = bin::get_month_grid(x) {
+        //         bin::set_month_grid(x, &None, false);
+        //         d2.borrow().mark_month(&month);
+        //     }
+        //     false
+        // }));
         g.hide();
         // Show doch nicht beim Aufrufer:
         g.show();
