@@ -423,34 +423,39 @@ impl Tb100Diary {
         }
     }
 
-    /// TODO Handle posbefore.
+    /// Handle posbefore.
     fn on_posbefore(&mut self) {
-        // var yd = date.ValueNn.AddDays(-1);
-        // var r = FactoryService.DiaryService.GetEntry(ServiceDaten, yd, true);
-        // if (r.Ok && r.Ergebnis != null)
-        // {
-        //   foreach (var p in r.Ergebnis.Positions ?? new List<TbEintragOrt>())
-        //   {
-        //     if (PositionList.FirstOrDefault(a => a.Ort_Uid == p.Ort_Uid) == null)
-        //     {
-        //       if (p.Datum_Bis == yd)
-        //         p.Datum_Bis = p.Datum_Bis.AddDays(1);
-        //       PositionList.Add(p);
-        //     }
-        //   }
-        //   InitPositions();
-        // }
+        if let Some(d) = functions::ond_add_days(&bin::get_date_grid(&self.date), -1) {
+            let daten = services::get_daten();
+            let r = diary_service::get_entry_position_list(&daten, &d);
+            if let (true, Ok(Some(list))) = (bin::get(&r, Some(&self.parent)), r) {
+                for p in list {
+                    if let None = self
+                        .position_list
+                        .iter()
+                        .position(|a| a.ort_uid == p.ort_uid)
+                    {
+                        let mut pc = p.clone();
+                        if pc.datum_bis == d {
+                            if let Some(d1) = functions::ond_add_days(&Some(pc.datum_bis), 1) {
+                                pc.datum_bis = d1;
+                            }
+                        }
+                        self.position_list.push(pc);
+                    }
+                }
+                self.init_positions();
+            }
+        }
     }
 
     /// Handle remove.
     fn on_remove(&mut self) {
         let r = bin::get_text_tv(&self.positions, false, 0);
-        if bin::get(&r, Some(&self.parent)) {
-            if let Ok(Some(uid)) = r {
-                if let Some(p) = self.position_list.iter().position(|a| a.ort_uid == uid) {
-                    self.position_list.remove(p);
-                    self.init_positions();
-                }
+        if let (true, Ok(Some(uid))) = (bin::get(&r, Some(&self.parent)), r) {
+            if let Some(p) = self.position_list.iter().position(|a| a.ort_uid == uid) {
+                self.position_list.remove(p);
+                self.init_positions();
             }
         }
     }
@@ -574,10 +579,10 @@ impl Tb100Diary {
                 }
             }
             bin::set_text_textview(&self.before3, &Some(entry));
+            // Current entry
             if let Some(tb) = crate::config::get(&mut errors, &diary_service::get_entry(&daten, &d))
             {
                 self.entry_old.eintrag = tb.eintrag.to_string();
-                //EntryOld.Positions.AddRange(tb.Positions);
                 self.angelegt.set_text(
                     functions::format_date_of(&tb.angelegt_am, &tb.angelegt_von, de).as_str(),
                 );
