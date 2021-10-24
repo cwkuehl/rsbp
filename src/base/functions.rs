@@ -77,6 +77,8 @@ pub fn f64_to_str_4<'a>(i: &f64) -> String {
     s
 }
 
+/// ===================== String =====================
+
 /// Wandelt optionalen String in String.
 /// * s: Betroffener String.
 pub fn ostr_to_str(s: &Option<String>) -> String {
@@ -145,6 +147,13 @@ pub fn to_first_upper(s: &str) -> String {
         x1
     }
 }
+
+/// Must String be taken for a compare?
+pub fn is_like(s: &str) -> bool {
+    !(s.is_empty() || s == "%" || s == "%%")
+}
+
+/// ===================== Date =====================
 
 /// Convert optional date to string.
 /// * ond: Affected date.

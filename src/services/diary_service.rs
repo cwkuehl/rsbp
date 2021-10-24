@@ -367,14 +367,48 @@ pub fn get_position_list<'a>(
 /// * search: Affected search strings.
 /// * returns: Position list or possibly errors.
 pub fn search_date<'a>(
-    _daten: &'a ServiceDaten,
+    daten: &'a ServiceDaten,
     _dir: &SearchDirectionEnum,
     date: &Option<NaiveDate>,
-    _search: &[String; 9],
+    search: &[String; 9],
 ) -> Result<Option<NaiveDate>> {
-    // let c = reps::establish_connection(daten);
-    // let db = DbContext::new(daten, &c);
-    //let e = reps::tb_ort::get_list_ext(&db, &daten.mandant_nr, puid, text)?;
+    if let Some(_d) = date {
+        let _s = check_search(search);
+        // println!("{:?}", s);
+        let c = reps::establish_connection(daten);
+        let _db = DbContext::new(daten, &c);
+        //let e = reps::tb_ort::get_list_ext(&db, &daten.mandant_nr, puid, text)?;
+    }
     //Ok(e)
     Ok(functions::ond_add_days(date, 2))
+}
+
+fn check_search(search: &[String; 9]) -> [String; 9] {
+    const COLUMNS: usize = 3;
+    const ROWS: usize = 3;
+    let mut s = search.clone();
+    for i in 0..(COLUMNS * ROWS) {
+        if !functions::is_like(s[i].as_str()) {
+            s[i] = String::new();
+        }
+    }
+    // Pack search pattern
+    for y in 0..ROWS {
+        let mut i = 0;
+        for x in 0..(COLUMNS - 1) {
+            if s[y * COLUMNS + x].is_empty() {
+                if !s[y * COLUMNS + x + 1].is_empty() {
+                    s[y * COLUMNS + i] = s[y * COLUMNS + x + 1].to_string();
+                    s[y * COLUMNS + x + 1] = String::new();
+                    i = i + 1;
+                }
+            } else {
+                i = i + 1;
+            }
+        }
+    }
+    if s[0].is_empty() {
+        s[0] = "%".to_string();
+    }
+    s
 }
