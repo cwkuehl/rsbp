@@ -360,7 +360,7 @@ pub fn get_position_list<'a>(
     Ok(e)
 }
 
-/// TODO Search for the date of fitting entry.
+/// Search for the date of fitting entry.
 /// * daten: Service data for database access.
 /// * dir: Affected direction.
 /// * date: Affected base date.
@@ -368,19 +368,21 @@ pub fn get_position_list<'a>(
 /// * returns: Position list or possibly errors.
 pub fn search_date<'a>(
     daten: &'a ServiceDaten,
-    _dir: &SearchDirectionEnum,
+    dir: &SearchDirectionEnum,
     date: &Option<NaiveDate>,
     search: &[String; 9],
 ) -> Result<Option<NaiveDate>> {
     if let Some(_d) = date {
-        let _s = check_search(search);
+        let s = check_search(search);
         // println!("{:?}", s);
         let c = reps::establish_connection(daten);
-        let _db = DbContext::new(daten, &c);
-        //let e = reps::tb_ort::get_list_ext(&db, &daten.mandant_nr, puid, text)?;
+        let db = DbContext::new(daten, &c);
+        let l = reps::tb_eintrag::get_list_search(&db, dir, date, &s)?;
+        if let Some(f) = l.get(0) {
+            return Ok(Some(f.datum));
+        }
     }
-    //Ok(e)
-    Ok(functions::ond_add_days(date, 2))
+    Ok(None)
 }
 
 fn check_search(search: &[String; 9]) -> [String; 9] {

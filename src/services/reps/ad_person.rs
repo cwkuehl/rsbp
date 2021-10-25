@@ -285,7 +285,7 @@ pub fn get_list_ext(db: &DbContext, from: &NaiveDate, to: &NaiveDate) -> Result<
             AD_PERSON::vorname,
             AD_PERSON::uid,
         ))
-        //.limit(1)
+        .limit(-1)
         .load::<AdPerson>(db.c)
         .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
     Ok(list)

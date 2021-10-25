@@ -1,5 +1,8 @@
 use super::DbContext;
-use crate::{config::RsbpError, services::undo::UndoEntry, Result};
+use crate::{
+    apis::enums::SearchDirectionEnum, base::functions, config::RsbpError,
+    services::undo::UndoEntry, Result,
+};
 use chrono::{NaiveDate, NaiveDateTime};
 use diesel::prelude::*;
 use rsbp_rep::{models::TbEintrag, schema::*};
@@ -229,4 +232,88 @@ pub fn get_list_ext(
         .load::<TbEintrag>(db.c)
         .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
     Ok(list)
+}
+
+/// Get search list.
+pub fn get_list_search(
+    db: &DbContext,
+    dir: &SearchDirectionEnum,
+    date: &Option<NaiveDate>,
+    search: &[String; 9],
+) -> Result<Vec<TbEintrag>> {
+    let mut q = TB_EINTRAG::table
+        .into_boxed()
+        .filter(TB_EINTRAG::mandant_nr.eq(db.daten.mandant_nr));
+    if let Some(d) = date {
+        if *dir == SearchDirectionEnum::Back {
+            q = q.filter(TB_EINTRAG::datum.lt(d));
+        }
+        if *dir == SearchDirectionEnum::Forward {
+            q = q.filter(TB_EINTRAG::datum.gt(d));
+        }
+    }
+    if !search[2].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .like(&search[0])
+                .or(TB_EINTRAG::eintrag.like(&search[1]))
+                .or(TB_EINTRAG::eintrag.like(&search[2])),
+        )
+    } else if !search[1].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .like(&search[0])
+                .or(TB_EINTRAG::eintrag.like(&search[1])),
+        )
+    } else if !search[0].is_empty() {
+        q = q.filter(TB_EINTRAG::eintrag.like(&search[0]))
+    }
+    if !search[5].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .like(&search[3])
+                .or(TB_EINTRAG::eintrag.like(&search[4]))
+                .or(TB_EINTRAG::eintrag.like(&search[5])),
+        )
+    } else if !search[4].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .like(&search[3])
+                .or(TB_EINTRAG::eintrag.like(&search[4])),
+        )
+    } else if !search[3].is_empty() {
+        q = q.filter(TB_EINTRAG::eintrag.like(&search[3]))
+    }
+    if !search[8].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .not_like(&search[6])
+                .and(TB_EINTRAG::eintrag.not_like(&search[7]))
+                .and(TB_EINTRAG::eintrag.not_like(&search[8])),
+        )
+    } else if !search[7].is_empty() {
+        q = q.filter(
+            TB_EINTRAG::eintrag
+                .not_like(&search[6])
+                .and(TB_EINTRAG::eintrag.not_like(&search[7])),
+        )
+    } else if !search[6].is_empty() {
+        q = q.filter(TB_EINTRAG::eintrag.not_like(&search[6]))
+    }
+    if *dir == SearchDirectionEnum::Back || *dir == SearchDirectionEnum::Last {
+        // DESC for MAX
+        let list = q
+            .order((TB_EINTRAG::datum.desc(),))
+            .limit(functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1))
+            .load::<TbEintrag>(db.c)
+            .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
+        return Ok(list);
+    } else {
+        let list = q
+            .order((TB_EINTRAG::datum,))
+            .limit(functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1))
+            .load::<TbEintrag>(db.c)
+            .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
+        return Ok(list);
+    }
 }

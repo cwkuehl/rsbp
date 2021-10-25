@@ -342,8 +342,16 @@ pub fn iif<'a>(b: bool, strue: &'a str, sfalse: &'a str) -> &'a str {
     sfalse
 }
 
-/// Liefert String in Abhängigkeit eines Boolean-Wertes.
+/// Liefert i32 in Abhängigkeit eines Boolean-Wertes.
 pub fn iif_i32(b: bool, itrue: i32, ifalse: i32) -> i32 {
+    if b {
+        return itrue;
+    }
+    ifalse
+}
+
+/// Liefert i64 in Abhängigkeit eines Boolean-Wertes.
+pub fn iif_i64(b: bool, itrue: i64, ifalse: i64) -> i64 {
     if b {
         return itrue;
     }
