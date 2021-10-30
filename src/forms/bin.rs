@@ -475,6 +475,17 @@ pub fn get_text_entry(tv: &Entry) -> String {
     tv.text().as_str().to_string()
 }
 
+/// Set the value of an Entry.
+/// * tv: Affected entry.
+/// * s: Affected string.
+pub fn set_text_entry(tv: &Entry, s: &Option<String>) {
+    if let Some(str) = s {
+        tv.set_text(str.as_str());
+    } else {
+        tv.set_text("");
+    }
+}
+
 /// Set the data of a RadioButton group.
 /// * rbd: Affected radiobutton group with data.
 pub fn init_data_rb(rbd: Vec<(&RadioButton, &str)>) {

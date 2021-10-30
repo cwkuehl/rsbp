@@ -1,7 +1,9 @@
-use std::{cell::RefCell, rc::Rc};
-
+use super::tb110_date::Tb110Date;
 use crate::{
-    apis::{enums::SearchDirectionEnum, services},
+    apis::{
+        enums::{DialogTypeEnum, SearchDirectionEnum},
+        services,
+    },
     base::functions,
     config::{self, RsbpConfig, RsbpError},
     forms::{
@@ -16,6 +18,7 @@ use crate::{
 use chrono::NaiveDate;
 use gtk::prelude::*;
 use rsbp_rep::{models::TbEintrag, models_ext::TbEintragOrtExt};
+use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug, Clone)]
 pub struct Tb100Diary {
@@ -162,8 +165,6 @@ impl Tb100Diary {
         w.clear.connect_clicked(
             glib::clone!(@strong wref => move |_| Self::on_clear(&mut wref.borrow_mut()) ),
         );
-        // w.save
-        //     .connect_clicked(glib::clone!(@strong w => move |_| Self::on_save(&w) ));
         w.entry.grab_focus();
         wref.clone()
     }
@@ -373,26 +374,33 @@ impl Tb100Diary {
         // Start(typeof(TB210Position), TB210_title, DialogTypeEnum.New, null, csbpparent: this);
     }
 
-    /// TODO Handle add.
+    /// Handle add.
     fn on_add(&mut self) {
         if let Some(uid) = bin::get_text_cb(&self.position) {
-            if let Some(_p) = self
+            if let Some(p) = self
                 .position_list
                 .iter()
                 .filter(|a| a.ort_uid == uid)
                 .collect::<Vec<&TbEintragOrtExt>>()
                 .first()
             {
-                // var p = new Tuple<string, DateTime>(o.Ort_Uid, o.Datum_Bis);
-                // var to = Start(typeof(TB110Date), TB110_title, DialogTypeEnum.Edit, p, modal: true, csbpparent: this) as DateTime?;
-                // if (to.HasValue)
-                // {
-                //   if (to.Value >= date.ValueNn)
-                //     o.Datum_Bis = to.Value;
-                //   else
-                //     o.Datum_Von = to.Value;
-                // }
-                // InitPositions();
+                // Change date
+                let wref = Tb110Date::new(DialogTypeEnum::Edit, p);
+                println!("TB110: {:?}", wref.borrow().result);
+                let od = bin::get_date_grid(&self.date);
+                if let (Some(to), Some(d)) = (wref.borrow().result, od) {
+                    let mut p1 = (*p).clone();
+                    if to >= d {
+                        p1.datum_bis = to;
+                    } else {
+                        p1.datum_von = to;
+                    }
+                    if let Some(pos) = self.position_list.iter().position(|a| a.ort_uid == uid) {
+                        self.position_list.remove(pos);
+                        self.position_list.insert(pos, p1);
+                    }
+                    self.init_positions();
+                }
                 return;
             }
             let daten = services::get_daten();

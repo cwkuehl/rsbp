@@ -35,7 +35,7 @@ pub struct Date {
     daytext: gtk::Label,
     yesterday: gtk::Button,
     tomorrow: gtk::Button,
-    calendar: gtk::Calendar,
+    pub calendar: gtk::Calendar,
     nullable: bool,
     with_calendar: bool,
     open: bool,
@@ -44,7 +44,7 @@ pub struct Date {
 }
 
 impl Date {
-    /// Create a new date control.
+    /// Create a new date control with callback.
     pub fn new<'a, T>(
         g: &gtk::Grid,
         callback: &'a Rc<RefCell<T>>,
@@ -204,6 +204,144 @@ impl Date {
         d2
     }
 
+    /// Create a new date control without callback.
+    pub fn new2<'a>(
+        g: &gtk::Grid,
+        name: &'a str,
+        nullable: bool,
+        with_calendar: bool,
+        open: bool,
+    ) -> Rc<RefCell<Self>> {
+        let de = config::get_config().is_de();
+        let unknown = gtk::CheckButton::new();
+        unknown.set_label(M::me(M::Date_unknown, de));
+        unknown.set_visible(true);
+        unknown.set_can_focus(true);
+        unknown.set_tooltip_text(Some(M::me(M::Date_unknown_tt, de)));
+        unknown.set_no_show_all(true);
+        g.attach(&unknown, 0, 0, 1, 1);
+        let date = gtk::Entry::new();
+        date.set_visible(true);
+        date.set_can_focus(true);
+        date.set_hexpand(false);
+        date.set_width_chars(10);
+        g.attach(&date, 1, 0, 1, 1);
+        let down = gtk::Button::new();
+        down.set_label("v");
+        down.set_visible(true);
+        down.set_can_focus(true);
+        down.set_receives_default(true);
+        down.set_no_show_all(true);
+        g.attach(&down, 2, 0, 1, 1);
+        let daytext = gtk::Label::new(Some(""));
+        daytext.set_visible(true);
+        daytext.set_hexpand(false);
+        daytext.set_margin_start(5);
+        daytext.set_width_chars(10);
+        g.attach(&daytext, 3, 0, 1, 1);
+        let yesterday = gtk::Button::new();
+        yesterday.set_label(M::me(M::Date_yesterday, de));
+        yesterday.set_visible(true);
+        yesterday.set_can_focus(true);
+        yesterday.set_hexpand(true);
+        yesterday.set_focus_on_click(false);
+        yesterday.set_tooltip_text(Some(M::me(M::Date_yesterday_tt, de)));
+        yesterday.set_use_underline(true);
+        yesterday.set_margin_start(5);
+        g.attach(&yesterday, 4, 0, 1, 1);
+        let today = gtk::Button::new();
+        today.set_label(M::me(M::Date_today, de));
+        today.set_visible(true);
+        today.set_can_focus(true);
+        today.set_hexpand(true);
+        today.set_focus_on_click(false);
+        today.set_tooltip_text(Some(M::me(M::Date_today_tt, de)));
+        today.set_use_underline(true);
+        g.attach(&today, 5, 0, 1, 1);
+        let tomorrow = gtk::Button::new();
+        tomorrow.set_label(M::me(M::Date_tomorrow, de));
+        tomorrow.set_visible(true);
+        tomorrow.set_can_focus(true);
+        tomorrow.set_hexpand(true);
+        tomorrow.set_focus_on_click(false);
+        tomorrow.set_tooltip_text(Some(M::me(M::Date_tomorrow_tt, de)));
+        tomorrow.set_use_underline(true);
+        g.attach(&tomorrow, 6, 0, 1, 1);
+        let calendar = gtk::Calendar::new();
+        calendar.set_visible(true);
+        calendar.set_can_focus(true);
+        calendar.set_hexpand(true);
+        calendar.set_vexpand(false);
+        calendar.set_no_show_all(true);
+        g.attach(&calendar, 0, 1, 7, 1);
+        let d = Self {
+            grid: g.clone(),
+            name: name.to_string(),
+            date: date.clone(),
+            down: down.clone(),
+            daytext: daytext.clone(),
+            yesterday: yesterday.clone(),
+            tomorrow: tomorrow.clone(),
+            calendar: calendar.clone(),
+            nullable,
+            with_calendar,
+            open,
+            unknown,
+            value: None,
+        };
+        let d2 = Rc::new(RefCell::new(d));
+        down.connect_clicked(glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_down(); }));
+        yesterday.connect_clicked(glib::clone!(@strong d2 => move |_| {
+            d2.borrow_mut().on_yesterday();
+            if let Some(month) = bin::get_month_grid(&d2.borrow().grid) {
+                bin::set_month_grid(&d2.borrow().grid, &None, false);
+                d2.borrow().mark_month(&month);
+            }
+        }));
+        today.connect_clicked(glib::clone!(@strong d2 => move |_| {
+            d2.borrow_mut().on_today();
+            if let Some(month) = bin::get_month_grid(&d2.borrow().grid) {
+                bin::set_month_grid(&d2.borrow().grid, &None, false);
+                d2.borrow().mark_month(&month);
+            }
+        }));
+        tomorrow.connect_clicked(glib::clone!(@strong d2 => move |_| {
+            d2.borrow_mut().on_tomorrow();
+            if let Some(month) = bin::get_month_grid(&d2.borrow().grid) {
+                bin::set_month_grid(&d2.borrow().grid, &None, false);
+                d2.borrow().mark_month(&month);
+            }
+        }));
+        calendar.connect_day_selected(glib::clone!(@strong d2 => move |cal: &gtk::Calendar| {
+            unsafe {
+                if let Some(valnn) = cal.data::<&str>("recursion") {
+                    let val = valnn.as_ref().clone();
+                    if val == "1" {
+                        return;
+                    }
+                }
+            }
+            d2.borrow_mut().on_calendar();
+            if let Some(month) = bin::get_month_grid(&d2.borrow().grid) {
+                bin::set_month_grid(&d2.borrow().grid, &None, false);
+                d2.borrow().mark_month(&month);
+            }
+        }));
+        g.connect_show(glib::clone!(
+            @strong d2 => move |_| {
+            d2.borrow_mut().on_show();
+        }));
+        g.connect_popup_menu(glib::clone!(@strong d2 => move |x| {
+            let date = bin::get_date_grid(x);
+            d2.borrow_mut().set_value(date, 1);
+            false
+        }));
+        g.hide();
+        // Show doch nicht beim Aufrufer:
+        g.show();
+        d2
+    }
+
     pub fn set_accel(&mut self, yesterday: &str, tomorrow: &str, label: Option<&gtk::Label>) {
         if !yesterday.is_empty() {
             self.yesterday
@@ -348,15 +486,6 @@ impl Date {
             }
         }
     }
-
-    // // Handle changed date.
-    // fn on_date(&mut self) -> DateEvent {
-    //     // println!("date {}", self.date.text().as_str());
-    //     if let Some(d) = functions::to_ond(self.date.text().as_str()) {
-    //         return self.set_value(Some(d), 2);
-    //     }
-    //     DateEvent::Unchanged
-    // }
 
     fn on_yesterday(&mut self) -> DateEvent {
         // println!("yesterday");

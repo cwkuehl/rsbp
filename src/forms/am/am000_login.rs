@@ -8,7 +8,7 @@ use crate::{
 };
 use bin::Form;
 use glib::prelude::*;
-use gtk::prelude::*; //, DialogExt};
+use gtk::prelude::*;
 use res::messages::M;
 
 #[derive(Debug, Clone)]
