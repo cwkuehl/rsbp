@@ -379,6 +379,11 @@ pub fn search_date<'a>(
         let db = DbContext::new(daten, &c);
         let l = reps::tb_eintrag::get_list_search(&db, dir, date, &s)?;
         if let Some(f) = l.get(0) {
+            if *dir == SearchDirectionEnum::Last && s[0] == "%" && s[3] == "" && s[6] == "" {
+                if let Some(d) = functions::nd_add_dmy(&f.datum, 1, 0, 0) {
+                    return Ok(Some(d));
+                }
+            }
             return Ok(Some(f.datum));
         }
     }
