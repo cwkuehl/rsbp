@@ -42,6 +42,7 @@ pub struct Tb100Diary {
     entry0: gtk::Label,
     id13: gtk::Grid,
     search00: gtk::Label,
+    clear: gtk::Button,
     search10: gtk::Label,
     search1: gtk::Entry,
     search20: gtk::Label,
@@ -68,10 +69,9 @@ pub struct Tb100Diary {
     back: gtk::Button,
     forward: gtk::Button,
     last: gtk::Button,
-    clear: gtk::Button,
     pos: gtk::Grid,
-    positions: gtk::TreeView,
     positions0: gtk::Label,
+    positions: gtk::TreeView,
     new: gtk::Button,
     remove: gtk::Button,
     position0: gtk::Label,
@@ -83,6 +83,7 @@ pub struct Tb100Diary {
     geaendert: gtk::Entry,
     posbefore: gtk::Button,
     entry: gtk::TextView,
+    position2: gtk::ComboBoxText,
     after10: gtk::Label,
     after1: gtk::TextView,
     after20: gtk::Label,
@@ -194,6 +195,7 @@ impl Tb100Diary {
             entry0: builder.object::<gtk::Label>("entry0").unwrap(),
             id13: builder.object::<gtk::Grid>("id13").unwrap(),
             search00: builder.object::<gtk::Label>("search00").unwrap(),
+            clear: builder.object::<gtk::Button>("clear").unwrap(),
             search10: builder.object::<gtk::Label>("search10").unwrap(),
             search1: builder.object::<gtk::Entry>("search1").unwrap(),
             search20: builder.object::<gtk::Label>("search20").unwrap(),
@@ -220,10 +222,9 @@ impl Tb100Diary {
             back: builder.object::<gtk::Button>("back").unwrap(),
             forward: builder.object::<gtk::Button>("forward").unwrap(),
             last: builder.object::<gtk::Button>("last").unwrap(),
-            clear: builder.object::<gtk::Button>("clear").unwrap(),
             pos: builder.object::<gtk::Grid>("pos").unwrap(),
-            positions: builder.object::<gtk::TreeView>("positions").unwrap(),
             positions0: builder.object::<gtk::Label>("positions0").unwrap(),
+            positions: builder.object::<gtk::TreeView>("positions").unwrap(),
             new: builder.object::<gtk::Button>("new").unwrap(),
             remove: builder.object::<gtk::Button>("remove").unwrap(),
             position0: builder.object::<gtk::Label>("position0").unwrap(),
@@ -235,6 +236,7 @@ impl Tb100Diary {
             geaendert: builder.object::<gtk::Entry>("geaendert").unwrap(),
             posbefore: builder.object::<gtk::Button>("posbefore").unwrap(),
             entry: builder.object::<gtk::TextView>("entry").unwrap(),
+            position2: builder.object::<gtk::ComboBoxText>("position2").unwrap(),
             after10: builder.object::<gtk::Label>("after10").unwrap(),
             after1: builder.object::<gtk::TextView>("after1").unwrap(),
             after20: builder.object::<gtk::Label>("after20").unwrap(),
@@ -508,6 +510,19 @@ impl Tb100Diary {
                     values.push(v);
                 }
                 let r = bin::add_string_columns_cb(&self.position, Some(values));
+                bin::get(&r, Some(&self.parent));
+                let mut values = Vec::<Vec<String>>::new();
+                values.push(vec![String::new(), String::new()]); // empty entry
+                let de = daten.config.is_de();
+                values.push(vec![
+                    M::mec(M::TB012, de).to_owned().to_string(),
+                    "0".to_string(),
+                ]); // without position
+                for e in rl {
+                    let v: Vec<String> = vec![e.bezeichnung.to_string(), e.uid.to_string()];
+                    values.push(v);
+                }
+                let r = bin::add_string_columns_cb(&self.position2, Some(values));
                 bin::get(&r, Some(&self.parent));
             }
         }
