@@ -309,6 +309,7 @@ pub fn get_list_search(
             .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
         return Ok(list);
     } else {
+        // SearchDirectionEnum::None, SearchDirectionEnum::First, SearchDirectionEnum::Forward
         let list = q
             .order((TB_EINTRAG::datum,))
             .limit(functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1))

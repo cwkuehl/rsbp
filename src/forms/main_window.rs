@@ -37,6 +37,7 @@ pub struct MainWindow {
     menu_dialogs: gtk::MenuItem,
     menu_reset: gtk::MenuItem,
     menu_diary: gtk::MenuItem,
+    menu_positions: gtk::MenuItem,
     menu_notes: gtk::MenuItem,
     menu_persons: gtk::MenuItem,
     menu_mileages: gtk::MenuItem,
@@ -149,6 +150,7 @@ impl MainWindow {
             menu_dialogs: builder.object::<gtk::MenuItem>("MenuDialogs").unwrap(),
             menu_reset: builder.object::<gtk::MenuItem>("MenuReset").unwrap(),
             menu_diary: builder.object::<gtk::MenuItem>("MenuDiary").unwrap(),
+            menu_positions: builder.object::<gtk::MenuItem>("MenuPositions").unwrap(),
             menu_notes: builder.object::<gtk::MenuItem>("MenuNotes").unwrap(),
             menu_persons: builder.object::<gtk::MenuItem>("MenuPersons").unwrap(),
             menu_mileages: builder.object::<gtk::MenuItem>("MenuMileages").unwrap(),
@@ -435,6 +437,7 @@ impl MainWindow {
         self.menu_reset.set_visible(true);
 
         self.menu_diary.set_visible(b);
+        self.menu_positions.set_visible(b);
         self.menu_notes.set_visible(b);
         self.menu_persons.set_visible(b);
         self.menu_mileages.set_visible(b);
@@ -514,6 +517,7 @@ impl MainWindow {
         // self.menu_options.activate();
         // self.menu_dialogs.activate();
         // self.menu_diary.activate();
+        // self.menu_positions.activate();
         // self.menu_notes.activate();
         // self.menu_persons.activate();
         // let _ = Ad120Birthdays::new();
@@ -698,6 +702,9 @@ impl MainWindow {
                 }
                 "TB100" => {
                     self.menu_diary.activate();
+                }
+                "TB200" => {
+                    //self.menu_positions.activate();
                 }
                 "WP200" => {
                     //self.menu_stocks.activate();

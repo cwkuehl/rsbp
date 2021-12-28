@@ -199,6 +199,15 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="MenuPositions">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">Menu.positions</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="OnMenuPositions" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkMenuItem" id="MenuNotes">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
