@@ -544,7 +544,7 @@ impl MainWindow {
         // self.menu_prices.activate();
         if functions::mach_nichts() == 0 {
             std::thread::spawn(|| {
-                crate::services::https_server::start();
+                let _ = crate::services::https_server::start();
             });
         }
     }

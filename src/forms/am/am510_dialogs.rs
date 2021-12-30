@@ -19,11 +19,9 @@ use std::{
 pub struct Am510Dialogs {
     window: gtk::Dialog,
     grid: gtk::Grid,
-    dialoge0: gtk::Label,
     dialoge: gtk::TreeView,
     zuordnen: gtk::Button,
     entfernen: gtk::Button,
-    zudialoge0: gtk::Label,
     zudialoge: gtk::TreeView,
     oben: gtk::Button,
     unten: gtk::Button,
@@ -76,11 +74,9 @@ impl<'a> Am510Dialogs {
         let w = Am510Dialogs {
             window: gtk::Dialog::new(),
             grid: builder.object::<gtk::Grid>("AM510Dialogs").unwrap(),
-            dialoge0: builder.object::<gtk::Label>("dialoge0").unwrap(),
             dialoge: builder.object::<gtk::TreeView>("dialoge").unwrap(),
             zuordnen: builder.object::<gtk::Button>("zuordnen").unwrap(),
             entfernen: builder.object::<gtk::Button>("entfernen").unwrap(),
-            zudialoge0: builder.object::<gtk::Label>("zudialoge0").unwrap(),
             zudialoge: builder.object::<gtk::TreeView>("zudialoge").unwrap(),
             oben: builder.object::<gtk::Button>("oben").unwrap(),
             unten: builder.object::<gtk::Button>("unten").unwrap(),

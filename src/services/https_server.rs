@@ -5,7 +5,7 @@ use mio::{
     net::{TcpListener, TcpStream},
 };
 use regex::{Regex, RegexBuilder};
-use rustls::{self, NoClientAuth, Session};
+use rustls::{self, ServerConnection};
 use rustls_pemfile;
 use serde_json::Value;
 use std::{
@@ -20,17 +20,6 @@ use std::{
 const LISTENER: mio::Token = mio::Token(0);
 
 static mut STOP: bool = false;
-
-// Which mode the server operates in.
-#[derive(Clone)]
-enum ServerMode {
-    /// Write back received bytes
-    Echo,
-
-    /// Do one read, then write a bodged HTTP response and
-    /// cleanly close the connection.
-    Http,
-}
 
 /// Simple HTTP request.
 struct HttpRequest {
@@ -74,17 +63,15 @@ struct TlsServer {
     connections: HashMap<mio::Token, OpenConnection>,
     next_id: usize,
     tls_config: Arc<rustls::ServerConfig>,
-    mode: ServerMode,
 }
 
 impl TlsServer {
-    fn new(server: TcpListener, mode: ServerMode, cfg: Arc<rustls::ServerConfig>) -> Self {
+    fn new(server: TcpListener, cfg: Arc<rustls::ServerConfig>) -> Self {
         TlsServer {
             server,
             connections: HashMap::new(),
             next_id: 2,
             tls_config: cfg,
-            mode,
         }
     }
 
@@ -93,11 +80,11 @@ impl TlsServer {
             match self.server.accept() {
                 Ok((socket, addr)) => {
                     println!("Accepting new connection from {:?}", addr);
-                    let tls_conn = rustls::ServerSession::new(&Arc::clone(&self.tls_config));
-                    let mode = self.mode.clone();
+                    let tls_conn = ServerConnection::new(Arc::clone(&self.tls_config))
+                        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
                     let token = mio::Token(self.next_id);
                     self.next_id += 1;
-                    let mut connection = OpenConnection::new(socket, token, mode, tls_conn);
+                    let mut connection = OpenConnection::new(socket, token, tls_conn);
                     connection.register(registry);
                     self.connections.insert(token, connection);
                 }
@@ -157,14 +144,17 @@ fn load_private_key(filename: &str) -> rustls::PrivateKey {
     );
 }
 
-fn make_config(/*args: &Args*/) -> Arc<rustls::ServerConfig> {
-    let client_auth = NoClientAuth::new();
-    let suites = rustls::ALL_CIPHERSUITES.to_vec();
+fn make_config(/*args: &Args*/) -> Result<Arc<rustls::ServerConfig>, RsbpError> {
     let certs = load_certs("/opt/Haushalt/CSBP/cert/cert.pem");
     let privkey = load_private_key("/opt/Haushalt/CSBP/cert/cert.key");
-    let mut config = rustls::ServerConfig::with_ciphersuites(client_auth, &suites);
-    config.set_single_cert(certs, privkey).unwrap();
-    Arc::new(config)
+    let config = rustls::ServerConfig::builder()
+        .with_safe_defaults()
+        .with_no_client_auth()
+        .with_single_cert(certs, privkey)
+        .map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
+    // Configure ALPN to accept HTTP/2, HTTP/1.1 in that order.
+    // config.alpn_protocols = vec![b"h2".to_vec(), b"http/1.1".to_vec()];
+    Ok(Arc::new(config))
 }
 
 /// This is a connection which has been accepted by the server, and is currently being served.
@@ -174,23 +164,16 @@ struct OpenConnection {
     token: mio::Token,
     closing: bool,
     closed: bool,
-    mode: ServerMode,
-    tls_conn: rustls::ServerSession,
+    tls_conn: ServerConnection,
 }
 
 impl OpenConnection {
-    fn new(
-        socket: TcpStream,
-        token: mio::Token,
-        mode: ServerMode,
-        tls_conn: rustls::ServerSession,
-    ) -> OpenConnection {
+    fn new(socket: TcpStream, token: mio::Token, tls_conn: ServerConnection) -> OpenConnection {
         OpenConnection {
             socket,
             token,
             closing: false,
             closed: false,
-            mode,
             tls_conn,
         }
     }
@@ -245,38 +228,27 @@ impl OpenConnection {
 
     fn try_plain_read(&mut self) {
         // Read and process all available plaintext.
-        if self.tls_conn.process_new_packets().is_ok() {
-            let mut buf = Vec::<u8>::new();
-            if let Ok(len) = self.tls_conn.read_to_end(&mut buf) {
-                if len > 0 {
-                    self.incoming_plaintext(&buf);
-                }
+        if let Ok(io_state) = self.tls_conn.process_new_packets() {
+            if io_state.plaintext_bytes_to_read() > 0 {
+                let mut buf = Vec::new();
+                buf.resize(io_state.plaintext_bytes_to_read(), 0u8);
+                self.tls_conn.reader().read(&mut buf).unwrap();
+                // println!("plaintext read {:?}", buf.len());
+                self.incoming_plaintext(&buf);
             }
         }
     }
 
     /// Process some amount of received plaintext.
     fn incoming_plaintext(&mut self, buf: &[u8]) {
-        match self.mode {
-            ServerMode::Echo => {
-                println!(
-                    "plaintext buffer {} {:?}",
-                    buf.len(),
-                    std::str::from_utf8(&buf).unwrap()
-                );
-                self.tls_conn.write_all(buf).unwrap();
-            }
-            ServerMode::Http => {
-                let req = get_http_request(buf);
-                let mut response = handle_http_request(req);
-                // let resp = b"HTTP/1.0 200 OK\r\nConnection: close\r\n\r\nHello world from rustls tlsserver\r\n";
-                self.tls_conn
-                    .write_all(response.headers_and_content().as_bytes())
-                    .unwrap();
-                let _ = self.tls_conn.flush();
-                //self.tls_conn.send_close_notify();
-            }
-        }
+        let req = get_http_request(buf);
+        let mut response = handle_http_request(req);
+        // let resp = b"HTTP/1.0 200 OK\r\nConnection: close\r\n\r\nHello world from rustls tlsserver\r\n";
+        self.tls_conn
+            .writer()
+            .write_all(response.headers_and_content().as_bytes())
+            .unwrap();
+        let _ = self.tls_conn.writer().flush();
     }
 
     fn tls_write(&mut self) -> io::Result<usize> {
@@ -520,20 +492,19 @@ fn handle_http_request(request: Result<HttpRequest, RsbpError>) -> HttpResponse 
     }
 }
 
-pub fn start() {
-    let addr: net::SocketAddr = "0.0.0.0:4202".parse().unwrap();
-    // addr.set_port(args.flag_port.unwrap_or(443));
-    let config = make_config(/*&args*/);
-    let mut listener = TcpListener::bind(addr).expect("cannot listen on port");
-    let mut poll = mio::Poll::new().unwrap();
+pub fn start() -> Result<(), RsbpError> {
+    let hostport = "0.0.0.0:4202";
+    let addr: net::SocketAddr = hostport.parse().unwrap();
+    let config = make_config(/*&args*/)?;
+    let mut listener = TcpListener::bind(addr)
+        .map_err(|_| RsbpError::error_string(format!("Cannot listen on {0}", hostport).as_str()))?;
+    let mut poll =
+        mio::Poll::new().map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
     poll.registry()
         .register(&mut listener, LISTENER, mio::Interest::READABLE)
-        .unwrap();
+        .map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
 
-    let _mode = ServerMode::Echo;
-    let mode = ServerMode::Http;
-
-    let mut tlsserv = TlsServer::new(listener, mode, config);
+    let mut tlsserv = TlsServer::new(listener, config);
     let mut events = mio::Events::with_capacity(256);
     unsafe {
         STOP = false;
@@ -566,6 +537,7 @@ pub fn start() {
             }
         }
     }
+    Ok(())
     // curl --insecure -X GET https://localhost:4202/hallo
 }
 

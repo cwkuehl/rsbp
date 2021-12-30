@@ -11,7 +11,6 @@ use crate::{
 };
 use gtk::prelude::*;
 use res::messages::M;
-use rsbp_rep::models::MaMandant;
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug, Clone)]
@@ -22,13 +21,9 @@ pub struct Ad120Birthdays {
     datum: gtk::Grid,
     tage0: gtk::Label,
     tage: gtk::Entry,
-    geburtstage0: gtk::Label,
-    geburtstagesw: gtk::ScrolledWindow,
     geburtstage: gtk::TextView,
-    id6: gtk::Box,
     starten: gtk::CheckButton,
     ok: gtk::Button,
-    model: Option<MaMandant>,
 }
 
 impl DateCallback for Ad120Birthdays {
@@ -72,15 +67,9 @@ impl<'a> Ad120Birthdays {
             datum: builder.object::<gtk::Grid>("datum").unwrap(),
             tage0: builder.object::<gtk::Label>("tage0").unwrap(),
             tage: builder.object::<gtk::Entry>("tage").unwrap(),
-            geburtstage0: builder.object::<gtk::Label>("geburtstage0").unwrap(),
-            geburtstagesw: builder
-                .object::<gtk::ScrolledWindow>("geburtstagesw")
-                .unwrap(),
             geburtstage: builder.object::<gtk::TextView>("geburtstage").unwrap(),
-            id6: builder.object::<gtk::Box>("id6").unwrap(),
             starten: builder.object::<gtk::CheckButton>("starten").unwrap(),
             ok: builder.object::<gtk::Button>("ok").unwrap(),
-            model: None,
         };
         let de = config.is_de();
         w.window

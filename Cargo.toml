@@ -25,6 +25,13 @@ edition = "2018"
 # cargo install diesel_cli --no-default-features --features "sqlite-bundled"
 # diesel setup --database-url='/home/wolfgang/hsqldb/rsbp.db'
 
+# Build for Linux
+# cargo build --release
+# Build for Windows:
+# rustup target add x86_64-pc-windows-gnu
+# rustup toolchain install stable-x86_64-pc-windows-gnu
+# cargo build --target x86_64-pc-windows-gnu
+
 
 [lib]
 name = "rsbp"

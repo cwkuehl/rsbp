@@ -38,7 +38,7 @@ pub const AEND_ZEIT: i64 = 60_000;
 
 #[cfg(test)]
 mod tests {
-    use heck::SnakeCase;
+    use heck::ToSnakeCase;
     use quick_xml::{events::Event, Reader};
 
     /// Generieren einer GUI-Struktur.

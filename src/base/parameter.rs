@@ -24,7 +24,7 @@ pub struct Parameter {
     /// Holt oder setzt die Beschreibung zum Parameter.
     comment: Option<String>,
     /// Holt oder setzt einen Wert, der angibt, ob der Wert getrimmt wird.
-    trim: bool,
+    _trim: bool,
     ///// Holt oder setzt einen Wert, der angibt, ob der Wert verschlüsselt ist.
     //crypted: bool,
     /// Holt oder setzt einen Wert, der angibt, ob der Wert aus den Benutzer-Einstellungen gelesen wurde?
@@ -60,7 +60,7 @@ lazy_static! {
                 value: None,
                 default: Some("Data Source=rsbp.db".to_string()),
                 comment: None,
-                trim: true,
+                _trim: true,
                 loaded: false,
                 setting: Some("ConnectionString"),
                 database: false,
@@ -74,7 +74,7 @@ lazy_static! {
                 value: None,
                 default: Some("RSBP".to_string()),
                 comment: None,
-                trim: true,
+                _trim: true,
                 loaded: false,
                 setting: Some("Title"),
                 database: true,
@@ -88,7 +88,7 @@ lazy_static! {
                 value: None,
                 default: Some("RSBP".to_string()),
                 comment: None,
-                trim: true,
+                _trim: true,
                 loaded: false,
                 setting: Some("TestProduktion"),
                 database: true,
@@ -102,7 +102,7 @@ lazy_static! {
                 value: None,
                 default: Some("".to_string()),
                 comment: None,
-                trim: true,
+                _trim: true,
                 loaded: false,
                 setting: Some("StartingDialogs"),
                 database: true,

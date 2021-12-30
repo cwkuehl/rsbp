@@ -83,7 +83,7 @@ impl<'a> DbContext<'a> {
 #[cfg(test)]
 mod tests {
     use crate::base::functions;
-    use heck::CamelCase;
+    use heck::ToUpperCamelCase;
     use quick_xml::{events::Event, Reader};
 
     struct Column {
@@ -139,7 +139,7 @@ use chrono::{{NaiveDate, NaiveDateTime}};
 use diesel::prelude::*;
 use rsbp_rep::{{models::{}, schema::*}};
 ",
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -165,8 +165,8 @@ pub fn undo(db: &mut DbContext, or: &String, ac: &String) -> Result<()> {{
     Ok(())
 }}
 ",
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -192,8 +192,8 @@ pub fn redo(db: &mut DbContext, or: &String, ac: &String) -> Result<()> {{
     Ok(())
 }}
 ",
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -294,11 +294,11 @@ pub fn save0(
 }}
 ",
                     parms,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     filter,
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                     init,
                 )
                 .as_str(),
@@ -351,7 +351,7 @@ pub fn save(
 }}
 ",
                     parms_rv,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     parms2,
                 )
                 .as_str(),
@@ -390,10 +390,10 @@ pub fn get(
 }}
 ",
                     parms_pk,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     filter,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -433,11 +433,11 @@ pub fn get2(db: &DbContext, b: &{}) -> Result<Option<{}>> {{
     Ok(p)
 }}
 ",
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     filter2,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -460,7 +460,7 @@ pub fn get_list(db: &DbContext{}) -> Result<Vec<{}>> {{
 }}
 ",
                     functions::iif(with_client, ", mandant_nr_: i32", ""),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     functions::iif(
                         with_client,
@@ -472,7 +472,7 @@ pub fn get_list(db: &DbContext{}) -> Result<Vec<{}>> {{
                         .as_str(),
                         ""
                     ),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -491,8 +491,8 @@ pub fn insert<'a>(db: &mut DbContext, b: &'a {}) -> Result<&'a {}> {{
     Ok(b)
 }}
 ",
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     t.name.to_lowercase(),
                 )
@@ -539,8 +539,8 @@ pub fn update<'a>(db: &mut DbContext, b: &'a {}) -> Result<&'a {}> {{
     Ok(b)
 }}
 ",
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     filter2,
                     set,
@@ -570,7 +570,7 @@ pub fn delete(db: &mut DbContext, b: &{}) -> Result<()> {{
     Ok(())
 }}
 ",
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_uppercase(),
                     filter2,
                     t.name.to_lowercase(),
@@ -586,7 +586,7 @@ pub fn delete(db: &mut DbContext, b: &{}) -> Result<()> {{
         let mut sb = String::new();
         let j = tables
             .iter()
-            .map(|a| a.name.to_camel_case())
+            .map(|a| a.name.to_upper_camel_case())
             .collect::<Vec<String>>()
             .join(", ");
         sb.push_str(
@@ -614,7 +614,7 @@ pub enum UndoEntry {{
                 format!(
                     "    {} {{ original: String, actual: String }},
 ",
-                    t.name.to_camel_case()
+                    t.name.to_upper_camel_case()
                 )
                 .as_str(),
             );
@@ -636,9 +636,9 @@ impl UndoEntry {
     }}
 ",
                     t.name.to_lowercase(),
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -656,7 +656,7 @@ impl UndoEntry {
         reps::{}::undo(db, original, actual)?;
     }}
 ",
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_lowercase(),
                 )
                 .as_str(),
@@ -671,7 +671,7 @@ impl UndoEntry {
         reps::{}::redo(db, original, actual)?;
     }}
 ",
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                     t.name.to_lowercase(),
                 )
                 .as_str(),
@@ -757,7 +757,7 @@ use serde::{{Deserialize, Serialize}};
 pub struct {} {{
 "#,
                     t.name.to_uppercase(),
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -785,7 +785,7 @@ impl Clone for {} {{
     fn clone(&self) -> Self {{
         Self {{
 "#,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -815,7 +815,7 @@ impl Clone for {} {{
 impl PartialEq for {} {{
     fn eq(&self, other: &Self) -> bool {{
 "#,
-                    t.name.to_camel_case(),
+                    t.name.to_upper_camel_case(),
                 )
                 .as_str(),
             );
@@ -869,7 +869,7 @@ impl Revision for {} {{
     }}
 }}
 "#,
-                        t.name.to_camel_case(),
+                        t.name.to_upper_camel_case(),
                     )
                     .as_str(),
                 );
