@@ -10,7 +10,7 @@ use crate::{
         ad::ad120_birthdays::Ad120Birthdays,
         ag::{ag100_clients::Ag100Clients, ag200_users::Ag200Users},
         am::{am000_login::Am000Login, am510_dialogs::Am510Dialogs},
-        tb::tb100_diary::Tb100Diary,
+        tb::{tb100_diary::Tb100Diary, tb200_positions::Tb200Positions},
     },
     res::{self, messages::Messages},
     services::login_service,
@@ -291,6 +291,14 @@ impl MainWindow {
                     gui.append_page(w.window.clone().upcast(), M::TB100_title);
                 }));
         }
+        {
+            let gui = Arc::clone(mw);
+            mw.menu_positions
+                .connect_activate(glib::clone!(@weak application => move |_| {
+                    let w = Tb200Positions::new(&gui.window);
+                    gui.append_page(w.window.upcast(), M::TB200_title);
+                }));
+        }
         mw.menu_notes
             .connect_activate(glib::clone!(@strong mw => move |_| {
                 MainWindow::not_implemented(Some(&mw.window));
@@ -517,7 +525,7 @@ impl MainWindow {
         // self.menu_options.activate();
         // self.menu_dialogs.activate();
         // self.menu_diary.activate();
-        // self.menu_positions.activate();
+        self.menu_positions.activate();
         // self.menu_notes.activate();
         // self.menu_persons.activate();
         // let _ = Ad120Birthdays::new();
@@ -704,7 +712,7 @@ impl MainWindow {
                     self.menu_diary.activate();
                 }
                 "TB200" => {
-                    //self.menu_positions.activate();
+                    self.menu_positions.activate();
                 }
                 "WP200" => {
                     //self.menu_stocks.activate();
@@ -725,14 +733,6 @@ impl MainWindow {
                     functions::mach_nichts();
                 }
             }
-            //   if (StartDialog.Dialoge.TryGetValue(d.Substring(1), out var sf))
-            //   {
-            //     var parr = d.Substring(1).Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-            //     var parm = parr.Length > 1 ? parr[1] : null;
-            //     var create = sf.Type.GetMethod("Create");
-            //     var dlg = create.Invoke(null, new object[] { parm, null }) as CsbpBin;
-            //     MainWindow.AppendPage(dlg, sf.Title);
-            //   }
         }
         if parameter::get_ad120_start() {
             // Geburtstagsliste starten
