@@ -619,8 +619,8 @@ impl Tb100Diary {
             let v: Vec<String> = vec![
                 e.ort_uid.to_string(),
                 e.bezeichnung.clone(),
-                functions::f64_to_str_4(&e.breite),
-                functions::f64_to_str_4(&e.laenge),
+                functions::f64_to_str_5(&e.breite, de),
+                functions::f64_to_str_5(&e.laenge, de),
                 functions::ond_to_str(&Some(e.datum_von)),
                 functions::ond_to_str(&Some(e.datum_bis)),
                 functions::ondt_to_str(&e.geaendert_am),

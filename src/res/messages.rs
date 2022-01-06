@@ -1178,6 +1178,13 @@ pub enum Messages {
     TB110_datum,
     TB110_datum_tt,
     TB200_title,
+    TB200_positions,
+    TB200_positions_tt,
+    TB200_positions_columns,
+    TB200_search,
+    TB200_search_tt,
+    TB200_all,
+    TB200_all_tt,
     TB210_title,
     TB210_nr,
     TB210_nr_tt,
@@ -2645,6 +2652,15 @@ impl Messages {
             M::TB110_datum => r#"_Date"#,
             M::TB110_datum_tt => r#"To date of position"#,
             M::TB200_title => r#"Positions"#,
+            M::TB200_positions => r#"_Positions"#,
+            M::TB200_positions_tt => r#"Positions"#,
+            M::TB200_positions_columns => {
+                r#"No.;Description;Latitude_r;Longitude_r;Changed at;Changed by;Created at;Created by"#
+            }
+            M::TB200_search => r#"_Search"#,
+            M::TB200_search_tt => r#"Search text"#,
+            M::TB200_all => r#"A_ll"#,
+            M::TB200_all_tt => r#"Clear selection criteria"#,
             M::TB210_title => r#"Position"#,
             M::TB210_nr => r#"No."#,
             M::TB210_nr_tt => r#"Position number"#,
@@ -4144,6 +4160,15 @@ impl Messages {
             M::TB110_datum => r#"_Datum"#,
             M::TB110_datum_tt => r#"Bis-Datum der Position"#,
             M::TB200_title => r#"Positionen"#,
+            M::TB200_positions => r#"_Positionen"#,
+            M::TB200_positions_tt => r#"Positionen"#,
+            M::TB200_positions_columns => {
+                r#"Nr.;Bezeichnung;Breite_r;Länge_r;Geändert am;Geändert von;Angelegt am;Angelegt von"#
+            }
+            M::TB200_search => r#"_Suche"#,
+            M::TB200_search_tt => r#"Selektions-Text"#,
+            M::TB200_all => r#"A_lle"#,
+            M::TB200_all_tt => r#"Selektionskriterien zurücksetzen"#,
             M::TB210_title => r#"Position"#,
             M::TB210_nr => r#"Nr."#,
             M::TB210_nr_tt => r#"Position-Nr."#,

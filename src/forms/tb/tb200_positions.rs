@@ -24,7 +24,7 @@ pub struct Tb200Positions {
     positions0: gtk::Label,
     positions: gtk::TreeView,
     all: gtk::Button,
-    name: gtk::Entry,
+    search: gtk::Entry,
 }
 
 impl Tb200Positions {
@@ -54,7 +54,7 @@ impl Tb200Positions {
             positions0: builder.object::<gtk::Label>("positions0").unwrap(),
             positions: builder.object::<gtk::TreeView>("positions").unwrap(),
             all: builder.object::<gtk::Button>("all").unwrap(),
-            name: builder.object::<gtk::Entry>("name").unwrap(),
+            search: builder.object::<gtk::Entry>("search").unwrap(),
         };
         w.window.connect_destroy(|_| {
             println!("TB200 Positions destroy");
@@ -86,12 +86,15 @@ impl Tb200Positions {
     /// Model-Daten initialisieren.
     /// * step: Betroffener Schritt: 0 erstmalig, 1 aktualisieren.
     fn init_data(&self, step: i32) {
+        if step <= 0 {
+            bin::set_text_entry(&self.search, &Some("%%".to_string()));
+        }
         if step <= 1 {
             let daten = services::get_daten();
             let l0 = diary_service::get_position_list(
                 &daten,
                 &None,
-                &Some(bin::get_text_entry(&self.name)),
+                &Some(bin::get_text_entry(&self.search)),
             );
             if bin::get(&l0, Some(&self.parent)) {
                 if let Ok(ref l) = l0 {
@@ -101,7 +104,9 @@ impl Tb200Positions {
                     for e in l {
                         let v: Vec<String> = vec![
                             e.uid.clone(),
-                            e.bezeichnung.clone(), // TODO Spalten ergänzen.
+                            e.bezeichnung.clone(),
+                            functions::f64_to_str_5(&e.breite, de),
+                            functions::f64_to_str_5(&e.laenge, de),
                             functions::ondt_to_str(&e.geaendert_am),
                             functions::ostr_to_str(&e.geaendert_von),
                             functions::ondt_to_str(&e.angelegt_am),
@@ -109,7 +114,7 @@ impl Tb200Positions {
                         ];
                         values.push(v);
                     }
-                    let columns = M::me(M::AG200_benutzer_columns, de);
+                    let columns = M::me(M::TB200_positions_columns, de);
                     let r = bin::add_string_columns_sort(&self.positions, columns, Some(values));
                     bin::get(&r, Some(&self.parent));
                 }

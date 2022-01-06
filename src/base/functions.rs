@@ -1,6 +1,7 @@
 use crate::res::messages::M;
 use chrono::{Datelike, NaiveDate, NaiveDateTime, Weekday};
 use std::borrow::Cow;
+use thousands::Separable;
 
 /// Die Funktion macht nichts und liefert immer 0.
 pub fn mach_nichts() -> i32 {
@@ -71,10 +72,49 @@ pub fn f64_to_str<'a>(i: f64) -> String {
 }
 
 /// Convert float to string with 4 digits.
-/// * i: Affected float.
-pub fn f64_to_str_4<'a>(i: &f64) -> String {
-    let s = format!("{:.4}", i);
+/// * f: Affected float.
+/// * is_de: German format?
+/// return: Formatted amount.
+pub fn f64_to_str_4<'a>(f: &f64, is_de: bool) -> String {
+    let s = ((f * 10000.0).round() / 10000.0).separate_with_commas();
+    if is_de {
+        return make_de(&s, is_de);
+    }
+    // let s = format!("{:.4}", i);
     s
+}
+
+/// Convert float to string with 5 digits.
+/// * f: Affected float.
+/// * is_de: German format?
+/// return: Formatted amount.
+pub fn f64_to_str_5<'a>(f: &f64, is_de: bool) -> String {
+    let s = ((f * 100000.0).round() / 100000.0).separate_with_commas();
+    if is_de {
+        return make_de(&s, is_de);
+    }
+    s
+}
+
+/// Convert English formatted amount to German format.
+/// * s: Affected English formatted amount.
+/// * is_de: German format?
+/// return: German formatted amount.
+pub fn make_de(s: &String, is_de: bool) -> String {
+    if is_de {
+        let mut sd = String::new();
+        for c in s.chars() {
+            if c == ',' {
+                sd.push('.');
+            } else if c == '.' {
+                sd.push(',');
+            } else {
+                sd.push(c);
+            }
+        }
+        return sd;
+    }
+    s.clone()
 }
 
 /// ===================== String =====================
