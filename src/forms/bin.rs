@@ -469,20 +469,20 @@ pub fn set_text_textview(tv: &TextView, s: &Option<String>) {
 }
 
 /// Get the value of a Entry.
-/// * tv: Affected entry.
+/// * e: Affected entry.
 /// * returns: Value as string.
-pub fn get_text_entry(tv: &Entry) -> String {
-    tv.text().as_str().to_string()
+pub fn get_text_entry(e: &Entry) -> String {
+    e.text().as_str().to_string()
 }
 
 /// Set the value of an Entry.
-/// * tv: Affected entry.
+/// * e: Affected entry.
 /// * s: Affected string.
-pub fn set_text_entry(tv: &Entry, s: &Option<String>) {
+pub fn set_text_entry(e: &Entry, s: &Option<String>) {
     if let Some(str) = s {
-        tv.set_text(str.as_str());
+        e.set_text(str.as_str());
     } else {
-        tv.set_text("");
+        e.set_text("");
     }
 }
 

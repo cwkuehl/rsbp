@@ -1,3 +1,4 @@
+use super::tb210_position::Tb210Position;
 use crate::{
     apis::{enums::DialogTypeEnum, services},
     base::functions,
@@ -177,11 +178,11 @@ impl Tb200Positions {
 
     /// Starten des Details-Dialogs.
     /// * dt: Betroffener Dialog-Typ.
-    fn start_dialog(&self, _dt: DialogTypeEnum) {
-        //let r = bin::get_text_tv(&self.benutzer, dt != DialogTypeEnum::New, 0);
-        //if bin::get(&r, Some(&self.parent)) {
-        // let uid = functions::to_i32(r.unwrap().unwrap_or("".into()).as_str());
-        // let _w = Ag210User::new(dt, &self, uid);
-        //}
+    fn start_dialog(&self, dt: DialogTypeEnum) {
+        let r = bin::get_text_tv(&self.positions, dt != DialogTypeEnum::New, 0);
+        if bin::get(&r, Some(&self.parent)) {
+            let uid = r.unwrap();
+            let _w = Tb210Position::new(dt, &self, &uid);
+        }
     }
 }

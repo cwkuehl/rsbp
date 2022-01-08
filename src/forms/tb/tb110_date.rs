@@ -74,7 +74,9 @@ impl Tb110Date {
             result: None,
         };
         let config = config::get_config();
-        w.window.set_title(M::me(M::TB110_title, config.is_de()));
+        w.window.set_title(
+            bin::get_title(M::TB110_title, &DialogTypeEnum::Without, config.is_de()).as_str(),
+        );
         w.window.set_modal(true);
         let content_area = w.window.content_area();
         content_area.add(&w.grid);

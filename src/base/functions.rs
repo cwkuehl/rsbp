@@ -28,6 +28,21 @@ pub fn to_f32(s: &str) -> f32 {
     0_f32
 }
 
+/// Wandelt einen String in einen Float um.
+/// * s: Zu konvertierender String.
+/// * is_de: German format?
+pub fn to_f64(s: &str, is_de: bool) -> f64 {
+    let mut s1 = s.to_string();
+    if is_de {
+        s1 = switch_en_de(&s1);
+    }
+    let x = s1.parse::<f64>();
+    if let Ok(i) = x {
+        return i;
+    }
+    0_f64
+}
+
 /// Convert string to bool.
 /// * s: Affected string.
 pub fn to_bool(s: &str) -> bool {
@@ -71,6 +86,33 @@ pub fn f64_to_str<'a>(i: f64) -> String {
     s
 }
 
+/// Convert float to string with 2 digits.
+/// * f: Affected float.
+/// * is_de: German format?
+/// return: Formatted amount.
+pub fn f64_to_str_2<'a>(f: &f64, is_de: bool) -> String {
+    let s = ((f * 100.0).round() / 100.0).separate_with_commas();
+    if is_de {
+        return switch_en_de(&s);
+    }
+    s
+}
+
+/// Convert float to optional string with 2 digits.
+/// * f: Affected float.
+/// * is_de: German format?
+/// return: Formatted amount.
+pub fn f64_to_ostr_2<'a>(f: &f64, is_de: bool) -> Option<String> {
+    if *f == 0.0 {
+        return None;
+    }
+    let s = ((f * 100.0).round() / 100.0).separate_with_commas();
+    if is_de {
+        return Some(switch_en_de(&s));
+    }
+    Some(s)
+}
+
 /// Convert float to string with 4 digits.
 /// * f: Affected float.
 /// * is_de: German format?
@@ -78,7 +120,7 @@ pub fn f64_to_str<'a>(i: f64) -> String {
 pub fn f64_to_str_4<'a>(f: &f64, is_de: bool) -> String {
     let s = ((f * 10000.0).round() / 10000.0).separate_with_commas();
     if is_de {
-        return make_de(&s, is_de);
+        return switch_en_de(&s);
     }
     // let s = format!("{:.4}", i);
     s
@@ -91,30 +133,26 @@ pub fn f64_to_str_4<'a>(f: &f64, is_de: bool) -> String {
 pub fn f64_to_str_5<'a>(f: &f64, is_de: bool) -> String {
     let s = ((f * 100000.0).round() / 100000.0).separate_with_commas();
     if is_de {
-        return make_de(&s, is_de);
+        return switch_en_de(&s);
     }
     s
 }
 
-/// Convert English formatted amount to German format.
-/// * s: Affected English formatted amount.
-/// * is_de: German format?
-/// return: German formatted amount.
-pub fn make_de(s: &String, is_de: bool) -> String {
-    if is_de {
-        let mut sd = String::new();
-        for c in s.chars() {
-            if c == ',' {
-                sd.push('.');
-            } else if c == '.' {
-                sd.push(',');
-            } else {
-                sd.push(c);
-            }
+/// Convert English formatted amount to German format or vice versa.
+/// * s: Affected formatted amount.
+/// return: Converted formatted amount.
+pub fn switch_en_de(s: &String) -> String {
+    let mut sd = String::new();
+    for c in s.chars() {
+        if c == ',' {
+            sd.push('.');
+        } else if c == '.' {
+            sd.push(',');
+        } else {
+            sd.push(c);
         }
-        return sd;
     }
-    s.clone()
+    return sd;
 }
 
 /// ===================== String =====================

@@ -6,6 +6,7 @@ use crate::{
     apis::{enums::SearchDirectionEnum, services::ServiceDaten},
     base::functions,
     config::RsbpError,
+    res::messages::M,
     Result,
 };
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
@@ -113,7 +114,7 @@ pub fn save_entry<'a>(
         }
         // Save positions.
         // bestehende Orte lesen
-        let mut liste = reps::tb_eintrag_ort::get_list_ext(&db, date, &0, None, None)?;
+        let mut liste = reps::tb_eintrag_ort::get_list_ext(&db, Some(date), &0, None, None)?;
         for i in pos {
             let puid = i.ort_uid.clone();
             let mut from = i.datum_von;
@@ -126,7 +127,7 @@ pub fn save_entry<'a>(
                 to = *date;
             }
             let listep =
-                reps::tb_eintrag_ort::get_list_ext(&db, &from, &0, Some(&to), Some(&puid))?;
+                reps::tb_eintrag_ort::get_list_ext(&db, Some(&from), &0, Some(&to), Some(&puid))?;
             let ovop = listep.first();
             if let Some(p) = liste.iter().position(|a| a.ort_uid == puid) {
                 liste.remove(p); // nicht mehr löschen
@@ -136,19 +137,42 @@ pub fn save_entry<'a>(
                 optimize_positions(&mut db, &puid, &from, &to, &None, &None)?;
             } else if let Some(vop) = ovop {
                 if listep.len() == 1 {
-                    let mfrom = functions::min_date(&vop.datum_von, &from);
-                    let mto = functions::max_date(&vop.datum_bis, &to);
-                    if !(vop.datum_von == mfrom && vop.datum_bis == mto) {
-                        // Maximaler Zeitraum
-                        optimize_positions(
-                            &mut db,
-                            &puid,
-                            &mfrom,
-                            &mto,
-                            &vop.angelegt_von,
-                            &vop.angelegt_am,
-                        )?;
-                        reps::tb_eintrag_ort::delete(&mut db, vop)?;
+                    if vop.datum_von == from && vop.datum_bis == to {
+                        functions::mach_nichts();
+                    } else if vop.datum_von <= from && vop.datum_bis >= to {
+                        if from == to {
+                            functions::mach_nichts(); // Fall: Aus Versehen gelöscht und wieder hinzugefügt.
+                        } else {
+                            // Zeitraum wird verkürzt.
+                            reps::tb_eintrag_ort::save0(
+                                &mut db,
+                                &daten.mandant_nr,
+                                &puid,
+                                &from,
+                                &to,
+                                &vop.angelegt_von,
+                                &vop.angelegt_am,
+                                &None,
+                                &None,
+                            )?;
+                            reps::tb_eintrag_ort::delete(&mut db, vop)?;
+                        }
+                    } else {
+                        // Nicht verkürzen.
+                        let mfrom = functions::min_date(&vop.datum_von, &from);
+                        let mto = functions::max_date(&vop.datum_bis, &to);
+                        if !(vop.datum_von == mfrom && vop.datum_bis == mto) {
+                            // Maximaler Zeitraum
+                            optimize_positions(
+                                &mut db,
+                                &puid,
+                                &mfrom,
+                                &mto,
+                                &vop.angelegt_von,
+                                &vop.angelegt_am,
+                            )?;
+                            reps::tb_eintrag_ort::delete(&mut db, vop)?;
+                        }
                     }
                 } else {
                     // listep.Count >= 1
@@ -266,8 +290,8 @@ fn optimize_positions<'a>(
     created_by: &Option<String>,
     created_at: &Option<NaiveDateTime>,
 ) -> Result<()> {
-    let listeb = reps::tb_eintrag_ort::get_list_ext(&db, &from, &-1, None, Some(&puid))?;
-    let listea = reps::tb_eintrag_ort::get_list_ext(&db, &to, &1, None, Some(&puid))?;
+    let listeb = reps::tb_eintrag_ort::get_list_ext(&db, Some(&from), &-1, None, Some(&puid))?;
+    let listea = reps::tb_eintrag_ort::get_list_ext(&db, Some(&to), &1, None, Some(&puid))?;
     let obef = listeb.first();
     let oaft = listea.first();
 
@@ -418,4 +442,89 @@ fn check_search(search: &[String; 9]) -> [String; 9] {
         s[0] = "%".to_string();
     }
     s
+}
+
+/// Save a position.
+/// * daten: Service data for database access.
+/// * uid: Affected ID.
+/// * desc: Affected description.
+/// * lat: Affected latitude.
+/// * lon: Affected longitude.
+/// * alt: Affected altitude.
+/// * memo: Affected memos.
+/// * returns: Possibly errors.
+pub fn save_position<'a>(
+    daten: &'a ServiceDaten,
+    uid: &String,
+    desc: &String,
+    lat: &String,
+    lon: &String,
+    alt: &String,
+    memo: &String,
+) -> Result<()> {
+    let mut r: Vec<String> = vec![];
+    let d = desc.trim().to_string();
+    let m = memo.trim().to_string();
+    let is_de = daten.config.is_de();
+    if d.len() <= 0 {
+        r.push(M::mec(M::TB007, is_de).into_owned());
+    }
+    let la = functions::to_f64(lat.as_str(), is_de);
+    if la < -90.0 || la > 90.0 {
+        r.push(M::mec(M::TB008, is_de).into_owned());
+    }
+    let lo = functions::to_f64(lon.as_str(), is_de);
+    if lo < -180.0 || lo > 180.0 {
+        r.push(M::mec(M::TB009, is_de).into_owned());
+    }
+    let al = functions::to_f64(alt.as_str(), is_de);
+    if r.len() > 0 {
+        return Err(RsbpError::error(&r));
+    }
+    let c = reps::establish_connection(daten);
+    let mut db = DbContext::new(daten, &c);
+    let tr = c.transaction::<(), RsbpError, _>(|| {
+        reps::tb_ort::save0(
+            &mut db,
+            &daten.mandant_nr,
+            &uid,
+            &d,
+            &la,
+            &lo,
+            &al,
+            &m,
+            &None,
+            &None,
+            &None,
+            &None,
+        )?;
+        Ok(())
+    });
+    if tr.is_ok() {
+        UndoRedoStack::add_undo(&mut db.ul);
+    }
+    tr
+}
+
+/// Delete a position.
+/// * daten: Service data for database access.
+/// * e: Affected Entity.
+/// * returns: Possibly errors.
+pub fn delete_position<'a>(daten: &'a ServiceDaten, e: &TbOrt) -> Result<()> {
+    let c = reps::establish_connection(daten);
+    let mut db = DbContext::new(daten, &c);
+    let tr = c.transaction::<(), RsbpError, _>(|| {
+        let plist = reps::tb_eintrag_ort::get_list_ext(&db, None, &0, None, Some(&e.uid))?;
+        if let Some(p) = plist.first() {
+            return Err(RsbpError::error_string(
+                M::tb013(&p.datum_von, daten.config.is_de()).as_str(),
+            ));
+        }
+        reps::tb_ort::delete(&mut db, e)?;
+        Ok(())
+    });
+    if tr.is_ok() {
+        UndoRedoStack::add_undo(&mut db.ul);
+    }
+    tr
 }

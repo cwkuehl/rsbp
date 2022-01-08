@@ -211,6 +211,7 @@ pub enum Messages {
     TB008,
     TB009,
     TB012,
+    // TB013_,
     WP001,
     WP002,
     WP003,
@@ -4486,6 +4487,16 @@ impl Messages {
             return format!("{0} von {1}", d, b);
         }
         format!("{0} of {1}", d, b)
+    }
+
+    pub fn tb013(g: &NaiveDate, is_de: bool) -> String {
+        if is_de {
+            return format!("Die Position wird in Tagebucheinträgen verwendet und kann nicht gelöscht werden, z.B. {}.", g.format("%Y-%m-%d"));
+        }
+        format!(
+            "The Position is used in diary entries and cannot be deleted, e.g. {}.",
+            g.format("%Y-%m-%d")
+        )
     }
 }
 

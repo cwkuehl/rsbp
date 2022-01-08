@@ -277,7 +277,7 @@ pub fn get_list_ext2(db: &DbContext, date: &NaiveDate) -> Result<Vec<TbEintragOr
 /// Get list.
 pub fn get_list_ext(
     db: &DbContext,
-    from: &NaiveDate,
+    from: Option<&NaiveDate>,
     add_days: &i32,
     to: Option<&NaiveDate>,
     puid: Option<&String>,
@@ -285,19 +285,21 @@ pub fn get_list_ext(
     let mut q = TB_EINTRAG_ORT::table
         .into_boxed()
         .filter(TB_EINTRAG_ORT::mandant_nr.eq(db.daten.mandant_nr));
-    let f = functions::nd_add_dmy(from, *add_days, 0, 0).unwrap_or(*from);
-    if let Some(t) = to {
-        q = q.filter(
-            TB_EINTRAG_ORT::datum_von
-                .le(t)
-                .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
-        );
-    } else {
-        q = q.filter(
-            TB_EINTRAG_ORT::datum_von
-                .le(f)
-                .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
-        );
+    if let Some(date) = from {
+        let f = functions::nd_add_dmy(date, *add_days, 0, 0).unwrap_or(*date);
+        if let Some(t) = to {
+            q = q.filter(
+                TB_EINTRAG_ORT::datum_von
+                    .le(t)
+                    .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
+            );
+        } else {
+            q = q.filter(
+                TB_EINTRAG_ORT::datum_von
+                    .le(f)
+                    .and(TB_EINTRAG_ORT::datum_bis.ge(f)),
+            );
+        }
     }
     if let Some(id) = puid {
         q = q.filter(TB_EINTRAG_ORT::ort_uid.eq(id));
