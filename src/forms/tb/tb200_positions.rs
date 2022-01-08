@@ -123,8 +123,13 @@ impl Tb200Positions {
         }
     }
 
+    /// Update parent.
+    pub fn update_parent(&self) {
+        self.on_refresh();
+    }
+
     /// Behandlung von Refresh.
-    pub fn on_refresh(&self) {
+    fn on_refresh(&self) {
         let f = move || self.init_data(1);
         let r = bin::refresh_treeview(&self.positions, f, None);
         bin::get(&r, Some(&self.parent));
@@ -182,7 +187,7 @@ impl Tb200Positions {
         let r = bin::get_text_tv(&self.positions, dt != DialogTypeEnum::New, 0);
         if bin::get(&r, Some(&self.parent)) {
             let uid = r.unwrap();
-            let _w = Tb210Position::new(dt, &self, &uid);
+            let _w = Tb210Position::new(dt, None, Some(self), &uid);
         }
     }
 }

@@ -1,3 +1,4 @@
+use super::{tb100_diary::Tb100Diary, tb200_positions::Tb200Positions};
 use crate::{
     apis::{enums::DialogTypeEnum, services},
     base::functions,
@@ -11,12 +12,11 @@ use res::messages::M;
 use rsbp_rep::models::TbOrt;
 use std::{cell::RefCell, rc::Rc};
 
-use super::tb200_positions::Tb200Positions;
-
 #[derive(Debug, Clone)]
 pub struct Tb210Position {
     dialog_type: DialogTypeEnum,
-    parent: Tb200Positions,
+    parent: Option<Tb100Diary>,
+    parent2: Option<Tb200Positions>,
     window: gtk::Dialog,
     uid: Option<String>,
     grid: gtk::Grid,
@@ -39,10 +39,11 @@ pub struct Tb210Position {
 impl Tb210Position {
     pub fn new(
         dialog_type: DialogTypeEnum,
-        parent: &Tb200Positions,
+        parent: Option<&Tb100Diary>,
+        parent2: Option<&Tb200Positions>,
         uid: &Option<String>,
     ) -> Rc<RefCell<Self>> {
-        let wref = Tb210Position::get_objects(dialog_type, parent, uid);
+        let wref = Tb210Position::get_objects(dialog_type, parent, parent2, uid);
         Tb210Position::init_data(&mut wref.borrow_mut(), 0);
         // Events erst nach dem init_data verbinden, damit das Model gespeichert ist.
         let w = wref.borrow();
@@ -56,14 +57,24 @@ impl Tb210Position {
     /// Formular aus glade-Datei erstellen.
     fn get_objects(
         dialog_type: DialogTypeEnum,
-        parent: &Tb200Positions,
+        parent: Option<&Tb100Diary>,
+        parent2: Option<&Tb200Positions>,
         uid: &Option<String>,
     ) -> Rc<RefCell<Self>> {
         let glade_src = include_str!("../../res/gtkgui/tb/TB210Position.glade");
         let builder = gtk::Builder::from_string(glade_src);
+        let mut p = None;
+        if let Some(p0) = parent {
+            p = Some(p0.clone());
+        }
+        let mut p2 = None;
+        if let Some(p0) = parent2 {
+            p2 = Some(p0.clone());
+        }
         let w = Tb210Position {
             dialog_type: dialog_type.clone(),
-            parent: parent.clone(),
+            parent: p,
+            parent2: p2,
             window: gtk::Dialog::new(),
             uid: uid.clone(),
             grid: builder.object::<gtk::Grid>("TB210Position").unwrap(),
@@ -182,14 +193,22 @@ impl Tb210Position {
                 &bin::get_text_textview(&self.notiz),
             );
             if bin::get(&r, Some(&self.window)) {
-                self.parent.on_refresh();
+                if let Some(p) = &self.parent {
+                    p.update_parent();
+                } else if let Some(p) = &self.parent2 {
+                    p.update_parent();
+                }
                 self.window.close();
             }
         } else if self.dialog_type == DialogTypeEnum::Delete {
             if let Some(model) = &self.model {
                 let r = diary_service::delete_position(&daten, model);
                 if bin::get(&r, Some(&self.window)) {
-                    self.parent.on_refresh();
+                    if let Some(p) = &self.parent {
+                        p.update_parent();
+                    } else if let Some(p) = &self.parent2 {
+                        p.update_parent();
+                    }
                     self.window.close();
                 }
             }

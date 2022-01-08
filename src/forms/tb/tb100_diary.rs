@@ -1,4 +1,4 @@
-use super::tb110_date::Tb110Date;
+use super::{tb110_date::Tb110Date, tb210_position::Tb210Position};
 use crate::{
     apis::{
         enums::{DialogTypeEnum, SearchDirectionEnum},
@@ -241,6 +241,11 @@ impl Tb100Diary {
         }
     }
 
+    /// Update parent.
+    pub fn update_parent(&self) {
+        self.fill_lists();
+    }
+
     /// Behandlung von Refresh.
     pub fn on_refresh(&mut self) {
         self.fill_lists();
@@ -317,9 +322,9 @@ impl Tb100Diary {
         }
     }
 
-    /// TODO Handle new.
+    /// Handle new.
     fn on_new(&mut self) {
-        // Start(typeof(TB210Position), TB210_title, DialogTypeEnum.New, null, csbpparent: this);
+        let _w = Tb210Position::new(DialogTypeEnum::New, Some(self), None, &None);
     }
 
     /// Handle add.
