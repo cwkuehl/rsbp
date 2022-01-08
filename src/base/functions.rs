@@ -1,5 +1,7 @@
 use crate::res::messages::M;
 use chrono::{Datelike, NaiveDate, NaiveDateTime, Weekday};
+use lazy_static::lazy_static;
+use regex::{Regex, RegexBuilder};
 use std::borrow::Cow;
 use thousands::Separable;
 
@@ -434,6 +436,25 @@ pub fn iif_i64(b: bool, itrue: i64, ifalse: i64) -> i64 {
         return itrue;
     }
     ifalse
+}
+
+/// Convert string with graphhopper.com coordinates to tuple
+pub fn to_coordinates(s: &str) -> Option<(f64, f64, f64)> {
+    lazy_static! {
+        static ref RE_COORD: Regex =
+            RegexBuilder::new(r#"^(-?\d+(\.\d+)),\s*(-?\d+(\.\d+))(,\s*(-?\d+(\.\d+))z?)?$"#)
+                .case_insensitive(true)
+                .build()
+                .unwrap();
+    }
+    if let Some(c) = RE_COORD.captures(s) {
+        return Some((
+            to_f64(&c[1], false),
+            to_f64(&c[3], false),
+            to_f64(&c.get(6).map_or("", |a| a.as_str()), false),
+        ));
+    }
+    None
 }
 
 #[cfg(test)]

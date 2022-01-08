@@ -52,7 +52,7 @@ impl Ag100Clients {
             mandanten: builder.object::<gtk::TreeView>("mandanten").unwrap(),
         };
         w.window.connect_destroy(|_| {
-            println!("AG100 Mandanten destroy");
+            println!("AG100 Clients destroy");
         });
         bin::make_locale(&builder, &w.config, None, &"".to_string());
         bin::set_bold(&w.mandanten0);

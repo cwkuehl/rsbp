@@ -52,7 +52,7 @@ impl Ag200Users {
             benutzer: builder.object::<gtk::TreeView>("benutzer").unwrap(),
         };
         w.window.connect_destroy(|_| {
-            println!("AG200 Benutzer destroy");
+            println!("AG200 Users destroy");
         });
         bin::make_locale(&builder, &w.config, None, &"".to_string());
         bin::set_bold(&w.benutzer0);

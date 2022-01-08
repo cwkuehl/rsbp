@@ -47,6 +47,9 @@ impl Tb210Position {
         Tb210Position::init_data(&mut wref.borrow_mut(), 0);
         // Events erst nach dem init_data verbinden, damit das Model gespeichert ist.
         let w = wref.borrow();
+        w.breite.connect_focus_out_event(
+            glib::clone!(@strong w => move |_,_| {return gtk::Inhibit { 0: Self::on_latitude(&w)};}),
+        );
         w.ok.connect_clicked(glib::clone!(@strong w => move |_| Self::on_ok(&w)));
         w.cancel
             .connect_clicked(glib::clone!(@strong w => move |_| Self::on_cancel(&w)));
@@ -162,19 +165,17 @@ impl Tb210Position {
         }
     }
 
-    // TODO /// <summary>Behandlung von Breite.</summary>
-    // /// <param name="sender">Betroffener Sender.</param>
-    // /// <param name="e">Betroffenes Ereignis.</param>
-    // protected void OnBreiteFocusOutEvent(object sender, Gtk.FocusOutEventArgs e)
-    // {
-    //   var c = Functions.ToCoordinates(breite.Text);
-    //   if (c != null)
-    //   {
-    //     breite.Text = Functions.ToString(c.Item1, 5);
-    //     laenge.Text = Functions.ToString(c.Item2, 5);
-    //     hoehe.Text = Functions.ToString(c.Item3, 2);
-    //   }
-    // }
+    /// Behandlung von OK.
+    fn on_latitude(&self) -> bool {
+        // println!("{}", self.breite.text());
+        if let Some(c) = functions::to_coordinates(bin::get_text_entry(&self.breite).as_str()) {
+            let is_de = config::get_config().is_de();
+            bin::set_text_entry(&self.breite, &Some(functions::f64_to_str_5(&c.0, is_de)));
+            bin::set_text_entry(&self.laenge, &Some(functions::f64_to_str_5(&c.1, is_de)));
+            bin::set_text_entry(&self.hoehe, &functions::f64_to_ostr_2(&c.2, is_de));
+        }
+        false
+    }
 
     /// Behandlung von OK.
     fn on_ok(&self) {

@@ -205,7 +205,7 @@ impl Tb100Diary {
             position_list_old: Vec::new(),
         };
         w.window.connect_destroy(|_| {
-            println!("TB100 Tagebuch destroy");
+            println!("TB100 Diary destroy");
         });
         bin::make_locale(&builder, &w.config, None, &"".to_string());
         bin::set_bold(&w.date0);
