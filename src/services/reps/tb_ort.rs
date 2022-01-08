@@ -1,7 +1,11 @@
 use super::DbContext;
 use crate::{config::RsbpError, services::undo::UndoEntry, Result};
 use chrono::NaiveDateTime;
-use diesel::prelude::*;
+use diesel::{
+    prelude::*,
+    sql_query,
+    sql_types::{Integer, Text},
+};
 use rsbp_rep::{models::TbOrt, schema::*};
 
 /// Undo a dataset.
@@ -233,17 +237,46 @@ pub fn get_list_ext(
     puid: &Option<String>,
     text: &Option<String>,
 ) -> Result<Vec<TbOrt>> {
-    let mut q = TB_ORT::table
-        .into_boxed()
-        .filter(TB_ORT::mandant_nr.eq(mandant_nr_));
-    if let Some(id) = puid {
-        q = q.filter(TB_ORT::uid.eq(id));
+    let sql = "SELECT a.mandant_nr mandant_nr, a.uid uid, a.bezeichnung || ' ' || cast(anzahl as text) bezeichnung, a.breite breite, a.laenge laenge, a.hoehe hoehe, a.notiz notiz, a.angelegt_von angelegt_von, a.angelegt_am angelegt_am, a.geaendert_von geaendert_von, a.geaendert_am geaendert_am
+      FROM (
+        SELECT b.mandant_nr, b.uid, b.bezeichnung, b.breite, b.laenge, b.hoehe, b.notiz, b.angelegt_von, b.angelegt_am, b.geaendert_von, b.geaendert_am, coalesce(SUM(JULIANDAY(c.datum_bis)-JULIANDAY(c.datum_von)+1),0) anzahl
+        FROM TB_Ort b LEFT JOIN TB_Eintrag_Ort c ON b.mandant_nr=c.mandant_nr AND b.uid=c.ort_uid
+        WHERE b.mandant_nr=? AND (0=? OR b.uid=?) AND (0=? OR b.bezeichnung like ?)
+        GROUP BY b.mandant_nr, b.uid, b.bezeichnung, b.breite, b.laenge, b.hoehe, b.notiz, b.angelegt_von, b.angelegt_am, b.geaendert_von, b.geaendert_am
+        ORDER BY anzahl desc
+      ) a".to_string();
+    let mut id0 = 0;
+    let mut id = "".to_string();
+    if let Some(id1) = puid {
+        id0 = 1;
+        id = id1.to_string();
     }
-    if let Some(t) = text {
-        q = q.filter(TB_ORT::bezeichnung.like(t).or(TB_ORT::notiz.like(t)));
+    let mut t0 = 0;
+    let mut t = "".to_string();
+    if let Some(t1) = text {
+        t0 = 1;
+        t = t1.to_string();
     }
-    let list = q
+    let list = sql_query(sql)
+        .bind::<Integer, _>(mandant_nr_)
+        .bind::<Integer, _>(id0)
+        .bind::<Text, _>(id)
+        .bind::<Integer, _>(t0)
+        .bind::<Text, _>(t)
         .load::<TbOrt>(db.c)
         .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
+    // let mut q = TB_ORT::table
+    //     .into_boxed()
+    //     .filter(TB_ORT::mandant_nr.eq(mandant_nr_));
+    // if let Some(id) = puid {
+    //     q = q.filter(TB_ORT::uid.eq(id));
+    // }
+    // if let Some(t) = text {
+    //     q = q.filter(TB_ORT::bezeichnung.like(t).or(TB_ORT::notiz.like(t)));
+    // }
+    // let list = q
+    //     .order(TB_ORT::bezeichnung.desc())
+    //     .load::<TbOrt>(db.c)
+    //     .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
     Ok(list)
 }

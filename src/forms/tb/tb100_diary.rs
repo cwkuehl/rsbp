@@ -509,6 +509,7 @@ impl Tb100Diary {
             bin::get_text_entry(&self.search8),
             bin::get_text_entry(&self.search9),
         ];
+        // TODO Suche nach Position und von-bis
         let d0 = diary_service::search_date(&daten, dir, &date, &search);
         if bin::get(&d0, Some(&self.parent)) {
             if let Ok(Some(d)) = d0 {

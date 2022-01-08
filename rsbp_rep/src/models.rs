@@ -2019,7 +2019,9 @@ impl Revision for TbEintragOrt {
     }
 }
 
-#[derive(Queryable, Insertable, Associations, AsChangeset, Debug, Serialize, Deserialize)]
+#[derive(
+    Queryable, Insertable, Associations, AsChangeset, Debug, Serialize, Deserialize, QueryableByName,
+)]
 #[table_name = "TB_ORT"]
 #[allow(non_snake_case)]
 pub struct TbOrt {

@@ -525,7 +525,7 @@ impl MainWindow {
         // self.menu_options.activate();
         // self.menu_dialogs.activate();
         // self.menu_diary.activate();
-        self.menu_positions.activate();
+        // self.menu_positions.activate();
         // self.menu_notes.activate();
         // self.menu_persons.activate();
         // let _ = Ad120Birthdays::new();

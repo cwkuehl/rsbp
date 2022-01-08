@@ -130,6 +130,7 @@ impl Tb200Positions {
 
     /// Behandlung von Refresh.
     fn on_refresh(&self) {
+        // TODO Suche automatisch starten nach Eingabe in Feld Suche.
         let f = move || self.init_data(1);
         let r = bin::refresh_treeview(&self.positions, f, None);
         bin::get(&r, Some(&self.parent));
