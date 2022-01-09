@@ -655,7 +655,7 @@ impl Tb100Diary {
 
     /// Load month.
     fn load_month(&mut self, date: Option<NaiveDate>) {
-        // TODO Aufruf beim Suchen
+        // TODO Monat anzeigen beim Suchen
         let mut m = Vec::<bool>::new();
         if let Some(d) = date {
             let daten = services::get_daten();

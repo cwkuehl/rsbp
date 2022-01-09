@@ -248,7 +248,6 @@ pub fn get_list_search(
     from: &Option<NaiveDate>,
     to: &Option<NaiveDate>,
 ) -> Result<Vec<TbEintrag>> {
-    // TODO natives SQL mit Join auf Tabelle TB_Eintrag_Ort
     let limit = functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1);
     let order = functions::iif(
         *dir == SearchDirectionEnum::Back || *dir == SearchDirectionEnum::Last,
