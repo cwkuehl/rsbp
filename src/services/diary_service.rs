@@ -389,21 +389,32 @@ pub fn get_position_list<'a>(
 /// * dir: Affected direction.
 /// * date: Affected base date.
 /// * search: Affected search strings.
+/// * puid: Affected position uid.
+/// * from: Affected from date.
+/// * to: Affected to date.
 /// * returns: Position list or possibly errors.
 pub fn search_date<'a>(
     daten: &'a ServiceDaten,
     dir: &SearchDirectionEnum,
     date: &Option<NaiveDate>,
     search: &[String; 9],
+    puid: &Option<String>,
+    from: &Option<NaiveDate>,
+    to: &Option<NaiveDate>,
 ) -> Result<Option<NaiveDate>> {
     if let Some(_d) = date {
         let s = check_search(search);
         // println!("{:?}", s);
         let c = reps::establish_connection(daten);
         let db = DbContext::new(daten, &c);
-        let l = reps::tb_eintrag::get_list_search(&db, dir, date, &s)?;
+        let l = reps::tb_eintrag::get_list_search(&db, dir, date, &s, puid, from, to)?;
         if let Some(f) = l.get(0) {
-            if *dir == SearchDirectionEnum::Last && s[0] == "%" && s[3] == "" && s[6] == "" {
+            if *dir == SearchDirectionEnum::Last
+                && s[0] == "%"
+                && s[3] == ""
+                && s[6] == ""
+                && puid.is_none()
+            {
                 if let Some(d) = functions::nd_add_dmy(&f.datum, 1, 0, 0) {
                     return Ok(Some(d));
                 }

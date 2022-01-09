@@ -1890,7 +1890,7 @@ impl PartialEq for SoKurse {
     }
 }
 
-#[derive(Queryable, Insertable, AsChangeset, Debug, Serialize, Deserialize)]
+#[derive(Queryable, Insertable, AsChangeset, Debug, Serialize, Deserialize, QueryableByName)]
 #[table_name = "TB_EINTRAG"]
 #[allow(non_snake_case)]
 pub struct TbEintrag {

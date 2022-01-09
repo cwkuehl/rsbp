@@ -4,7 +4,11 @@ use crate::{
     services::undo::UndoEntry, Result,
 };
 use chrono::{NaiveDate, NaiveDateTime};
-use diesel::prelude::*;
+use diesel::{
+    prelude::*,
+    sql_query,
+    sql_types::{Date, Integer, Text},
+};
 use rsbp_rep::{models::TbEintrag, schema::*};
 
 /// Undo a dataset.
@@ -240,81 +244,99 @@ pub fn get_list_search(
     dir: &SearchDirectionEnum,
     date: &Option<NaiveDate>,
     search: &[String; 9],
+    puid: &Option<String>,
+    from: &Option<NaiveDate>,
+    to: &Option<NaiveDate>,
 ) -> Result<Vec<TbEintrag>> {
-    let mut q = TB_EINTRAG::table
-        .into_boxed()
-        .filter(TB_EINTRAG::mandant_nr.eq(db.daten.mandant_nr));
-    if let Some(d) = date {
+    // TODO natives SQL mit Join auf Tabelle TB_Eintrag_Ort
+    let limit = functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1);
+    let order = functions::iif(
+        *dir == SearchDirectionEnum::Back || *dir == SearchDirectionEnum::Last,
+        "a.datum desc",
+        "a.datum",
+    );
+    let mut date1 = 0;
+    let mut date2 = 0;
+    let mut datesql = db.daten.get_today();
+    let mut from1 = 0;
+    let mut fromsql = db.daten.get_today();
+    let mut to1 = 0;
+    let mut tosql = db.daten.get_today();
+    let mut puid1 = 0;
+    let mut puidsql = "".to_string();
+    let mut subsql = " AND (0=? OR a.angelegt_von=?)".to_string();
+    if let Some(uid) = puid {
+        if uid == "0" {
+            subsql = " AND NOT EXISTS(SELECT * FROM TB_Eintrag_Ort b WHERE a.mandant_nr=b.mandant_nr AND b.datum_von<=a.datum AND a.datum<=b.datum_bis AND (0=? OR b.angelegt_von=?))".to_string();
+        } else {
+            puid1 = 1;
+            puidsql = uid.to_string();
+            subsql = " AND EXISTS(SELECT * FROM TB_Eintrag_Ort b WHERE a.mandant_nr=b.mandant_nr AND (0=? OR b.ort_uid=?) AND b.datum_von<=a.datum AND a.datum<=b.datum_bis)".to_string();
+        }
+    }
+    let sql = format!( "SELECT a.mandant_nr mandant_nr, a.datum datum, a.eintrag eintrag, a.angelegt_von angelegt_von, a.angelegt_am angelegt_am, a.geaendert_von geaendert_von, a.geaendert_am geaendert_am, a.replikation_uid replikation_uid
+      FROM TB_Eintrag a WHERE a.mandant_nr=? AND (0=? OR a.datum<?) AND (0=? OR a.datum>?) AND (0=? OR a.datum>=?) AND (0=? OR a.datum<=?){}
+      AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
+      AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
+      AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?)
+      ORDER BY {} LIMIT {}", subsql, order, limit);
+    if let Some(d0) = date {
+        datesql = *d0;
         if *dir == SearchDirectionEnum::Back {
-            q = q.filter(TB_EINTRAG::datum.lt(d));
+            date1 = 1;
         }
         if *dir == SearchDirectionEnum::Forward {
-            q = q.filter(TB_EINTRAG::datum.gt(d));
+            date2 = 1;
         }
     }
-    if !search[2].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .like(&search[0])
-                .or(TB_EINTRAG::eintrag.like(&search[1]))
-                .or(TB_EINTRAG::eintrag.like(&search[2])),
-        )
-    } else if !search[1].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .like(&search[0])
-                .or(TB_EINTRAG::eintrag.like(&search[1])),
-        )
-    } else if !search[0].is_empty() {
-        q = q.filter(TB_EINTRAG::eintrag.like(&search[0]))
+    if let Some(d0) = from {
+        from1 = 1;
+        fromsql = *d0;
     }
-    if !search[5].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .like(&search[3])
-                .or(TB_EINTRAG::eintrag.like(&search[4]))
-                .or(TB_EINTRAG::eintrag.like(&search[5])),
-        )
-    } else if !search[4].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .like(&search[3])
-                .or(TB_EINTRAG::eintrag.like(&search[4])),
-        )
-    } else if !search[3].is_empty() {
-        q = q.filter(TB_EINTRAG::eintrag.like(&search[3]))
+    if let Some(d0) = to {
+        to1 = 1;
+        tosql = *d0;
     }
-    if !search[8].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .not_like(&search[6])
-                .and(TB_EINTRAG::eintrag.not_like(&search[7]))
-                .and(TB_EINTRAG::eintrag.not_like(&search[8])),
-        )
-    } else if !search[7].is_empty() {
-        q = q.filter(
-            TB_EINTRAG::eintrag
-                .not_like(&search[6])
-                .and(TB_EINTRAG::eintrag.not_like(&search[7])),
-        )
-    } else if !search[6].is_empty() {
-        q = q.filter(TB_EINTRAG::eintrag.not_like(&search[6]))
-    }
-    if *dir == SearchDirectionEnum::Back || *dir == SearchDirectionEnum::Last {
-        // DESC for MAX
-        let list = q
-            .order((TB_EINTRAG::datum.desc(),))
-            .limit(functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1))
-            .load::<TbEintrag>(db.c)
-            .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
-        return Ok(list);
-    } else {
-        // SearchDirectionEnum::None, SearchDirectionEnum::First, SearchDirectionEnum::Forward
-        let list = q
-            .order((TB_EINTRAG::datum,))
-            .limit(functions::iif_i64(*dir == SearchDirectionEnum::None, -1, 1))
-            .load::<TbEintrag>(db.c)
-            .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
-        return Ok(list);
-    }
+    let search1 = functions::iif_i32(search[0].is_empty(), 0, 1);
+    let search2 = functions::iif_i32(search[1].is_empty(), 0, 1);
+    let search3 = functions::iif_i32(search[2].is_empty(), 0, 1);
+    let search4 = functions::iif_i32(search[3].is_empty(), 0, 1);
+    let search5 = functions::iif_i32(search[4].is_empty(), 0, 1);
+    let search6 = functions::iif_i32(search[5].is_empty(), 0, 1);
+    let search7 = functions::iif_i32(search[6].is_empty(), 0, 1);
+    let search8 = functions::iif_i32(search[7].is_empty(), 0, 1);
+    let search9 = functions::iif_i32(search[8].is_empty(), 0, 1);
+    let list = sql_query(sql)
+        .bind::<Integer, _>(db.daten.mandant_nr)
+        .bind::<Integer, _>(date1)
+        .bind::<Date, _>(datesql)
+        .bind::<Integer, _>(date2)
+        .bind::<Date, _>(datesql)
+        .bind::<Integer, _>(from1)
+        .bind::<Date, _>(fromsql)
+        .bind::<Integer, _>(to1)
+        .bind::<Date, _>(tosql)
+        .bind::<Integer, _>(puid1)
+        .bind::<Text, _>(puidsql)
+        .bind::<Integer, _>(search1)
+        .bind::<Text, _>(search[0].to_string())
+        .bind::<Integer, _>(search2)
+        .bind::<Text, _>(search[1].to_string())
+        .bind::<Integer, _>(search3)
+        .bind::<Text, _>(search[2].to_string())
+        .bind::<Integer, _>(search4)
+        .bind::<Text, _>(search[3].to_string())
+        .bind::<Integer, _>(search5)
+        .bind::<Text, _>(search[4].to_string())
+        .bind::<Integer, _>(search6)
+        .bind::<Text, _>(search[5].to_string())
+        .bind::<Integer, _>(search7)
+        .bind::<Text, _>(search[6].to_string())
+        .bind::<Integer, _>(search8)
+        .bind::<Text, _>(search[7].to_string())
+        .bind::<Integer, _>(search9)
+        .bind::<Text, _>(search[8].to_string())
+        .load::<TbEintrag>(db.c)
+        .map_err(|source: diesel::result::Error| RsbpError::DieselError { source })?;
+    Ok(list)
 }

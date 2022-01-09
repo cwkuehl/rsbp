@@ -60,6 +60,8 @@ pub struct Tb100Diary {
     posbefore: gtk::Button,
     entry: gtk::TextView,
     position2: gtk::ComboBoxText,
+    from: gtk::Grid,
+    to: gtk::Grid,
     after1: gtk::TextView,
     after2: gtk::TextView,
     after3: gtk::TextView,
@@ -186,6 +188,8 @@ impl Tb100Diary {
             posbefore: builder.object::<gtk::Button>("posbefore").unwrap(),
             entry: builder.object::<gtk::TextView>("entry").unwrap(),
             position2: builder.object::<gtk::ComboBoxText>("position2").unwrap(),
+            from: builder.object::<gtk::Grid>("from").unwrap(),
+            to: builder.object::<gtk::Grid>("to").unwrap(),
             after1: builder.object::<gtk::TextView>("after1").unwrap(),
             after2: builder.object::<gtk::TextView>("after2").unwrap(),
             after3: builder.object::<gtk::TextView>("after3").unwrap(),
@@ -213,6 +217,8 @@ impl Tb100Diary {
         let w2 = Rc::new(RefCell::new(w));
         let g = controls::Date::new(&w2.borrow().date, &w2, "date", false, true, true);
         g.borrow_mut().set_accel("m", "p", Some(&w2.borrow().date0));
+        let _ = controls::Date::new(&w2.borrow().from, &w2, "from", true, true, false);
+        let _ = controls::Date::new(&w2.borrow().to, &w2, "to", true, true, false);
         //g.borrow().grab_focus();
         w2.borrow().window.show_all();
         w2
@@ -491,6 +497,10 @@ impl Tb100Diary {
         self.search7.set_text("%%");
         self.search8.set_text("%%");
         self.search9.set_text("%%");
+        bin::set_text_cb(&self.position2, &None);
+        let today = services::get_daten().get_today();
+        bin::set_date_grid(&self.from, &None, true);
+        bin::set_date_grid(&self.to, &Some(today), true);
     }
 
     /// Search next entry
@@ -509,8 +519,10 @@ impl Tb100Diary {
             bin::get_text_entry(&self.search8),
             bin::get_text_entry(&self.search9),
         ];
-        // TODO Suche nach Position und von-bis
-        let d0 = diary_service::search_date(&daten, dir, &date, &search);
+        let puid = bin::get_text_cb(&self.position2);
+        let from = bin::get_date_grid(&self.from);
+        let to = bin::get_date_grid(&self.to);
+        let d0 = diary_service::search_date(&daten, dir, &date, &search, &puid, &from, &to);
         if bin::get(&d0, Some(&self.parent)) {
             if let Ok(Some(d)) = d0 {
                 bin::set_date_grid(&self.date, &Some(d), true);
@@ -643,6 +655,7 @@ impl Tb100Diary {
 
     /// Load month.
     fn load_month(&mut self, date: Option<NaiveDate>) {
+        // TODO Aufruf beim Suchen
         let mut m = Vec::<bool>::new();
         if let Some(d) = date {
             let daten = services::get_daten();
