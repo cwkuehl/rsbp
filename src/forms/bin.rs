@@ -594,6 +594,19 @@ pub fn set_date_grid(grid: &Grid, v: &Option<NaiveDate>, emit_signal: bool) {
     }
 }
 
+/// Emit signal to update the month.
+/// * grid: Affected grid.
+pub fn update_date_grid_month(grid: &Grid) {
+    let clist = grid.children();
+    for c in clist.iter() {
+        if c.is::<gtk::CheckButton>() {
+            // println!("{:?}", c);
+            c.emit_popup_menu();
+            break;
+        }
+    }
+}
+
 /// Get the month value of a Grid.
 /// * grid: Affected grid.
 /// * returns: Value or error.

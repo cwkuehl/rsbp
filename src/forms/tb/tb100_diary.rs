@@ -232,7 +232,7 @@ impl Tb100Diary {
             self.fill_lists();
             self.clear_search();
             self.entry_old.datum = daten.get_today();
-            self.load_month(Some(self.entry_old.datum));
+            // self.load_month(Some(self.entry_old.datum)); // braucht nicht wegen on_last
             bin::set_date_grid(&self.date, &Some(self.entry_old.datum), true);
             self.update_entries(false, true);
             self.on_last();
@@ -525,8 +525,10 @@ impl Tb100Diary {
         let d0 = diary_service::search_date(&daten, dir, &date, &search, &puid, &from, &to);
         if bin::get(&d0, Some(&self.parent)) {
             if let Ok(Some(d)) = d0 {
+                self.load_month(Some(d));
                 bin::set_date_grid(&self.date, &Some(d), true);
                 self.update_entries(false, true);
+                bin::update_date_grid_month(&self.date);
             }
         }
     }
@@ -655,7 +657,6 @@ impl Tb100Diary {
 
     /// Load month.
     fn load_month(&mut self, date: Option<NaiveDate>) {
-        // TODO Monat anzeigen beim Suchen
         let mut m = Vec::<bool>::new();
         if let Some(d) = date {
             let daten = services::get_daten();
@@ -707,7 +708,7 @@ impl Tb100Diary {
         if load {
             let d = bin::get_date_grid(&self.date);
             let r = self.load_entries(d);
-            self.load_month(d);
+            // self.load_month(d); // braucht nicht wegen on_date_month
             self.loaded = true;
             bin::get(&r, Some(&self.parent));
         }

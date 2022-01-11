@@ -198,6 +198,11 @@ impl Date {
         //     }
         //     false
         // }));
+        let u = d2.borrow().unknown.clone();
+        u.connect_popup_menu(glib::clone!(@strong d2 => move |_| {
+            d2.borrow_mut().on_refresh();
+            false
+        }));
         g.hide();
         // Show doch nicht beim Aufrufer:
         g.show();
@@ -336,6 +341,11 @@ impl Date {
             d2.borrow_mut().set_value(date, 1);
             false
         }));
+        let u = d2.borrow().unknown.clone();
+        u.connect_popup_menu(glib::clone!(@strong d2 => move |_| {
+            d2.borrow_mut().on_refresh();
+            false
+        }));
         g.hide();
         // Show doch nicht beim Aufrufer:
         g.show();
@@ -352,6 +362,13 @@ impl Date {
         }
         if let Some(lbl) = label {
             lbl.set_mnemonic_widget(Some(&self.calendar));
+        }
+    }
+
+    fn on_refresh(&mut self) {
+        if let Some(month) = bin::get_month_grid(&self.grid) {
+            bin::set_month_grid(&self.grid, &None, false);
+            self.mark_month(&month);
         }
     }
 
@@ -474,7 +491,7 @@ impl Date {
 
     /// Mark month.
     fn mark_month(&self, marks: &Vec<bool>) {
-        for i in 0..30 {
+        for i in 0..31 {
             let mut b = false;
             if let Some(d) = marks.get(i) {
                 b = *d;
