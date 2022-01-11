@@ -135,6 +135,11 @@ impl Date {
         };
         let cb = callback.clone();
         let d2 = Rc::new(RefCell::new(d));
+        date.connect_key_release_event(glib::clone!(@strong cb, @strong d2 => move |_,_| {
+            cb.borrow_mut().date_callback(&d2.borrow_mut().on_date_key());
+            d2.borrow_mut().on_refresh();
+            return gtk::Inhibit(false);
+        }));
         down.connect_clicked(
             glib::clone!(@strong cb, @strong d2 => move |_| { d2.borrow_mut().on_down(); }),
         );
@@ -295,6 +300,10 @@ impl Date {
             value: None,
         };
         let d2 = Rc::new(RefCell::new(d));
+        date.connect_key_release_event(glib::clone!(@strong d2 => move |_,_| {
+            d2.borrow_mut().on_date_key();
+            return gtk::Inhibit(false);
+        }));
         down.connect_clicked(glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_down(); }));
         yesterday.connect_clicked(glib::clone!(@strong d2 => move |_| {
             d2.borrow_mut().on_yesterday();
@@ -343,6 +352,7 @@ impl Date {
         }));
         let u = d2.borrow().unknown.clone();
         u.connect_popup_menu(glib::clone!(@strong d2 => move |_| {
+            // Mark month in calender.
             d2.borrow_mut().on_refresh();
             false
         }));
@@ -390,6 +400,16 @@ impl Date {
         } else {
             self.calendar.hide();
         }
+    }
+
+    /// Handle date key.
+    fn on_date_key(&mut self) -> DateEvent {
+        let text = bin::get_text_entry(&self.date);
+        if let (10, Some(d)) = (text.len(), functions::ostr_to_ond(Some(text.as_str()))) {
+            // println!("{} {}", text, d);
+            return self.set_value(Some(d), 2);
+        }
+        DateEvent::Unchanged
     }
 
     fn on_down(&mut self) {

@@ -233,7 +233,7 @@ impl<'a> Am510Dialogs {
     /// Behandlung von OK.
     fn on_ok(&self) {
         let sd = self.model.join("|");
-        println!("sd {}", sd);
+        // println!("sd {}", sd);
         parameter::set_start_dialogs(&sd);
         let r = parameter::save();
         bin::get(&r, Some(&self.window));

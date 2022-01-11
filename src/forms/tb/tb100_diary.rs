@@ -345,7 +345,7 @@ impl Tb100Diary {
             {
                 // Change date
                 let wref = Tb110Date::new(DialogTypeEnum::Edit, p);
-                println!("TB110: {:?}", wref.borrow().result);
+                // println!("TB110: {:?}", wref.borrow().result);
                 let od = bin::get_date_grid(&self.date);
                 if let (Some(to), Some(d)) = (wref.borrow().result, od) {
                     let mut p1 = (*p).clone();

@@ -165,7 +165,7 @@ impl Tb210Position {
         }
     }
 
-    /// Behandlung von OK.
+    /// Handle latitude.
     fn on_latitude(&self) -> bool {
         // println!("{}", self.breite.text());
         if let Some(c) = functions::to_coordinates(bin::get_text_entry(&self.breite).as_str()) {

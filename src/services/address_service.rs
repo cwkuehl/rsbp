@@ -53,14 +53,6 @@ pub fn get_birthday_list<'a>(
         UndoRedoStack::add_undo(&mut db.ul);
     }
 
-    // let l0 = reps::ad_person::get_list_test(&db)?;
-    // for uid in l0 {
-    //     println!("{}", uid);
-    //     if !uid.starts_with("253") {
-    //         let l1 = reps::ad_person::get(&db, &daten.mandant_nr, &uid)?.unwrap();
-    //         println!("{:?}", l1.geburt);
-    //     }
-    // }
     let l = reps::ad_person::get_list_ext(&db, &from, &to)?;
     for p in l {
         let d = p.geburtk;
