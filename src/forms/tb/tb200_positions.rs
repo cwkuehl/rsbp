@@ -14,7 +14,6 @@ pub struct Tb200Positions {
     config: RsbpConfig,
     parent: gtk::Window,
     pub window: gtk::Grid,
-    //grid: gtk::Grid,
     refresh: gtk::Button,
     undo: gtk::Button,
     redo: gtk::Button,
@@ -44,7 +43,6 @@ impl Tb200Positions {
             config: config::get_config(),
             parent: parent.clone(),
             window: builder.object::<gtk::Grid>("TB200Positions").unwrap(),
-            //grid: builder.object::<gtk::Grid>("TB200Positions").unwrap(),
             refresh: builder.object::<gtk::Button>("refreshAction").unwrap(),
             undo: builder.object::<gtk::Button>("undoAction").unwrap(),
             redo: builder.object::<gtk::Button>("redoAction").unwrap(),
@@ -80,6 +78,11 @@ impl Tb200Positions {
             .connect_row_activated(glib::clone!(@strong w => move |_,_,_| Self::on_position(&w) ));
         w.all
             .connect_clicked(glib::clone!(@strong w => move |_| Self::on_all(&w) ));
+        w.search
+            .connect_key_release_event(glib::clone!(@strong w => move |_,_| {
+                w.on_refresh();
+                return gtk::Inhibit(false);
+            }));
         w.window.show_all();
         w
     }
@@ -130,10 +133,14 @@ impl Tb200Positions {
 
     /// Behandlung von Refresh.
     fn on_refresh(&self) {
-        // TODO Suche automatisch starten nach Eingabe in Feld Suche.
+        //std::thread::spawn(move || {
+        //println!("on_refresh start");
+        //std::thread::sleep(std::time::Duration::from_millis(500));
         let f = move || self.init_data(1);
         let r = bin::refresh_treeview(&self.positions, f, None);
         bin::get(&r, Some(&self.parent));
+        //println!("on_refresh end");
+        //});
     }
 
     /// Behandlung von Undo.
