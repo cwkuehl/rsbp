@@ -275,10 +275,11 @@ pub fn get_list_search(
     }
     let sql = format!( "SELECT a.mandant_nr mandant_nr, a.datum datum, a.eintrag eintrag, a.angelegt_von angelegt_von, a.angelegt_am angelegt_am, a.geaendert_von geaendert_von, a.geaendert_am geaendert_am, a.replikation_uid replikation_uid
       FROM TB_Eintrag a WHERE a.mandant_nr=? AND (0=? OR a.datum<?) AND (0=? OR a.datum>?) AND (0=? OR a.datum>=?) AND (0=? OR a.datum<=?){}
-      AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
-      AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
-      AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?)
+       AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
+       AND ((0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?) OR (0=? OR a.eintrag like ?))
+       AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?) AND (0=? OR NOT a.eintrag like ?)
       ORDER BY {} LIMIT {}", subsql, order, limit);
+    // println!("{}", sql);
     if let Some(d0) = date {
         datesql = *d0;
         if *dir == SearchDirectionEnum::Back {
@@ -297,11 +298,11 @@ pub fn get_list_search(
         tosql = *d0;
     }
     let search1 = functions::iif_i32(search[0].is_empty(), 0, 1);
-    let search2 = functions::iif_i32(search[1].is_empty(), 0, 1);
-    let search3 = functions::iif_i32(search[2].is_empty(), 0, 1);
+    let search2 = functions::iif_i32(search[1].is_empty() && search1 == 0, 0, 1);
+    let search3 = functions::iif_i32(search[2].is_empty() && search2 == 0, 0, 1);
     let search4 = functions::iif_i32(search[3].is_empty(), 0, 1);
-    let search5 = functions::iif_i32(search[4].is_empty(), 0, 1);
-    let search6 = functions::iif_i32(search[5].is_empty(), 0, 1);
+    let search5 = functions::iif_i32(search[4].is_empty() && search4 == 0, 0, 1);
+    let search6 = functions::iif_i32(search[5].is_empty() && search5 == 0, 0, 1);
     let search7 = functions::iif_i32(search[6].is_empty(), 0, 1);
     let search8 = functions::iif_i32(search[7].is_empty(), 0, 1);
     let search9 = functions::iif_i32(search[8].is_empty(), 0, 1);
