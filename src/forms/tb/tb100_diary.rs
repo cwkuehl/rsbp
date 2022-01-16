@@ -4,7 +4,10 @@ use crate::{
         enums::{DialogTypeEnum, SearchDirectionEnum},
         services,
     },
-    base::functions,
+    base::{
+        functions,
+        parameter::{self},
+    },
     config::{self, RsbpConfig, RsbpError},
     forms::{
         bin,
@@ -283,13 +286,38 @@ impl Tb100Diary {
         self.update_entries(true, false);
     }
 
-    /// Behandlung von Save.
+    /// Handle Save.
     fn on_save(&mut self) {
-        // TODO Generate report
+        // Generate report
         self.update_entries(true, false);
-        // var pfad = Parameter.TempPath;
-        // var datei = Functions.GetDateiname(M0(TB005), true, true, "txt");
-        // UiTools.SaveFile(Get(FactoryService.DiaryService.GetFile(ServiceDaten, GetSearchArray())), pfad, datei, true);
+        let daten = services::get_daten();
+        let search = [
+            bin::get_text_entry(&self.search1),
+            bin::get_text_entry(&self.search2),
+            bin::get_text_entry(&self.search3),
+            bin::get_text_entry(&self.search4),
+            bin::get_text_entry(&self.search5),
+            bin::get_text_entry(&self.search6),
+            bin::get_text_entry(&self.search7),
+            bin::get_text_entry(&self.search8),
+            bin::get_text_entry(&self.search9),
+        ];
+        let puid = bin::get_text_cb(&self.position2);
+        let from = bin::get_date_grid(&self.from);
+        let to = bin::get_date_grid(&self.to);
+        let r = diary_service::get_file(&daten, &search, &puid, &from, &to);
+        if let (true, Ok(lines)) = (bin::get(&r, Some(&self.parent)), r) {
+            let is_de = config::get_config().is_de();
+            let pfad = parameter::get_temp_path();
+            let datei = functions::get_file_name(
+                M::mec(M::TB005, is_de).to_owned().to_string().as_str(),
+                true,
+                true,
+                "txt",
+            );
+            let r1 = ui_tools::save_file(&lines, &pfad, &datei, true);
+            bin::get(&r1, Some(&self.parent));
+        }
     }
 
     /// Behandlung von Date.

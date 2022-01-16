@@ -425,6 +425,43 @@ pub fn search_date<'a>(
     Ok(None)
 }
 
+/// Get a vector of all fitting diary entries for storing in a file.
+/// * daten: Service data for database access.
+/// * search: Affected search strings.
+/// * puid: Affected position uid.
+/// * from: Affected from date.
+/// * to: Affected to date.
+/// * returns: Vector of all fitting diary entries.
+pub fn get_file<'a>(
+    daten: &'a ServiceDaten,
+    search: &[String; 9],
+    puid: &Option<String>,
+    from: &Option<NaiveDate>,
+    to: &Option<NaiveDate>,
+) -> Result<Vec<String>> {
+    let s = check_search(search);
+    // println!("{:?}", s);
+    let c = reps::establish_connection(daten);
+    let db = DbContext::new(daten, &c);
+    let l = reps::tb_eintrag::get_list_search(
+        &db,
+        &SearchDirectionEnum::None,
+        &None,
+        &s,
+        puid,
+        from,
+        to,
+    )?;
+    let is_de = daten.config.is_de();
+    let mut v: Vec<String> = vec![];
+    v.push(M::tb002(&daten.get_now(), is_de));
+    // TODO Selektionskriterien ergänzen.
+    for e in l {
+        v.push(M::tb006(&e.datum, &e.eintrag, is_de));
+    }
+    Ok(v)
+}
+
 fn check_search(search: &[String; 9]) -> [String; 9] {
     const COLUMNS: usize = 3;
     const ROWS: usize = 3;

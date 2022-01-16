@@ -45,30 +45,31 @@ release = { opt-level = 3, panic = "abort" }
 rsbp_rep = { path = "./rsbp_rep" }
 locale_config = { version = "*" }
 home = { version = "*" }
-lazy_static = { version = "*" }
-regex = { version = "*" }
-log = { version = "*" }
-log4rs = { version = "*" }
+lazy_static = { version = "*" } # static code
+regex = { version = "*" } # regular expression
+log = { version = "*" } # logging
+log4rs = { version = "*" } # logging
 strum = { version = "*" } # enums and strings
 strum_macros = { version = "*" }
 uuid = { version = "*", features = ["v4"] }
 chrono = { version = "*", features = ["serde"] }
-serde = { version = "*" }
-serde_json = { version = "*" }
+serde = { version = "*" } # serialization
+serde_json = { version = "*" } # serialization with json
 gtk = { version = "0.14.0", features = ["v3_24"] } # dpkg -l libgtk2.0-0 libgtk-3-0
 glib = { version = "*" }
 gdk = { version = "*" }
 gdk-pixbuf = { version = "*" }
-rusqlite = { version = "*", features = ["bundled"] }
-diesel = { version = "*", features = ["sqlite", "chrono"] }
+rusqlite = { version = "*", features = ["bundled"] } # sqlite database access
+diesel = { version = "*", features = ["sqlite", "chrono"] } # OR mapper
 #diesel-tracing = { version = "*", features = ["sqlite"] }
-rustls = { version = "*" }
+rustls = { version = "*" } # TLS
 rustls-pemfile = { version = "*" }
 mio = { version = "*", features = ["os-poll", "tcp"] }
-webbrowser = { version = "*" } # Start Browser with URL.
 #num-format = { version = "*", features = ["std"] } # integer format
 thousands = { version = "*" } # float format
+rand = { version = "*" } # random numbers
+open = { version = "*" } # open file or url
 
 [dev-dependencies]
-quick-xml = { version = "*" }
-heck = { version = "*" }
+quick-xml = { version = "*" } # parse xml
+heck = { version = "*" } # camelCase

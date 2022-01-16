@@ -202,11 +202,11 @@ pub enum Messages {
     SB034_,
     SB035_,
     TB001,
-    TB002_,
+    // TB002_,
     TB003_,
     TB004_,
     TB005,
-    TB006_,
+    // TB006_,
     TB007,
     TB008,
     TB009,
@@ -1612,13 +1612,11 @@ impl Messages {
             M::SB034_ => r#"SB034{0} - {1}"#,
             M::SB035_ => r#"SB035{0} or {1}"#,
             M::TB001 => r#"TB001The search parameter is invalid."#,
-            M::TB002_ => r#"TB002Report: {0:yyyy-MM-dd HH:mm:ss}"#,
             M::TB003_ => {
                 r#"TB003Search: (/{0}/ or /{1}/ or /{2}/) and (/{3}/ or /{4}/ or /{5}/) and not (/{6}/ or /{7}/ or /{8}/)"#
             }
             M::TB004_ => r#"TB004Wrong counter at {0:yyyy-MM-dd}: {1}, expected: {2}"#,
             M::TB005 => r#"TB005Diary"#,
-            M::TB006_ => r#"TB006{0:yyyy-MM-dd} {1}"#,
             M::TB007 => r#"TB007Type in a description."#,
             M::TB008 => r#"TB008The latitude must be between -90 and +90."#,
             M::TB009 => r#"TB009The longitude must be between -180 and +180."#,
@@ -3108,13 +3106,11 @@ impl Messages {
             M::SB034_ => r#"SB034{0} - {1}"#,
             M::SB035_ => r#"SB035{0} oder {1}"#,
             M::TB001 => r#"TB001Der Such-Parameter ist ungültig."#,
-            M::TB002_ => r#"TB002Bericht: {0:yyyy-MM-dd HH:mm:ss}"#,
             M::TB003_ => {
                 r#"TB003Suche nach: (/{0}/ oder /{1}/ oder /{2}/) und (/{3}/ oder /{4}/ oder /{5}/) und nicht (/{6}/ oder /{7}/ oder /{8}/)"#
             }
             M::TB004_ => r#"TB004Falscher Zähler am {0:yyyy-MM-dd}: {1}, erwartet: {2}"#,
             M::TB005 => r#"TB005Tagebuch"#,
-            M::TB006_ => r#"TB006{0:yyyy-MM-dd} {1}"#,
             M::TB007 => r#"TB007Die Bezeichnung darf nicht leer sein."#,
             M::TB008 => r#"TB008Die Breite muss zwischen -90 und +90 sein."#,
             M::TB009 => r#"TB009Die Länge muss zwischen -180 und +180 sein."#,
@@ -4487,6 +4483,20 @@ impl Messages {
             return format!("{0} von {1}", d, b);
         }
         format!("{0} of {1}", d, b)
+    }
+
+    pub fn tb002(g: &NaiveDateTime, is_de: bool) -> String {
+        if is_de {
+            return format!("Tagebuch-Bericht vom {}", g.format("%Y-%m-%d %H:%M:%S"));
+        }
+        format!("Diary report {}", g.format("%Y-%m-%d %H:%M:%S"))
+    }
+
+    pub fn tb006(g: &NaiveDate, e: &String, is_de: bool) -> String {
+        if is_de {
+            return format!("{} {}", g.format("%Y-%m-%d"), e);
+        }
+        format!("{} {}", g.format("%Y-%m-%d"), e)
     }
 
     pub fn tb013(g: &NaiveDate, is_de: bool) -> String {
