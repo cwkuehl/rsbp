@@ -135,9 +135,12 @@ impl Date {
         };
         let cb = callback.clone();
         let d2 = Rc::new(RefCell::new(d));
-        // unknown.connect_clicked(
-        // glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_unknown(); }),
-        // );
+        unknown.connect_clicked(glib::clone!(@strong d2 => move |_| {
+            if d2.try_borrow().is_err() {
+              return;
+            }
+            d2.borrow_mut().on_unknown();
+        }));
         date.connect_key_release_event(glib::clone!(@strong cb, @strong d2 => move |_,_| {
             cb.borrow_mut().date_callback(&d2.borrow_mut().on_date_key());
             d2.borrow_mut().on_refresh();
@@ -303,9 +306,12 @@ impl Date {
             value: None,
         };
         let d2 = Rc::new(RefCell::new(d));
-        // unknown.connect_clicked(
-        //     glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_unknown(); }),
-        // );
+        unknown.connect_clicked(glib::clone!(@strong d2 => move |_| {
+            if d2.try_borrow().is_err() {
+              return;
+            }
+            d2.borrow_mut().on_unknown();
+        }));
         date.connect_key_release_event(glib::clone!(@strong d2 => move |_,_| {
             d2.borrow_mut().on_date_key();
             return gtk::Inhibit(false);
