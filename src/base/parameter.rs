@@ -49,6 +49,9 @@ const AG_TEST_PRODUKTION: &str = "AG_TEST_PRODUKTION";
 /// Parameter-Key: AG_STARTDIALOGE.
 const AG_STARTDIALOGE: &str = "AG_STARTDIALOGE";
 
+/// Parameter-Key: AG_TEMP_PFAD.
+const AG_TEMP_PFAD: &str = "AG_TEMP_PFAD";
+
 lazy_static! {
     /// Sammlung von festen Parametern mit Erklärungen.
     static ref PARAMS: Arc<RwLock<HashMap<&'static str, Parameter>>> = {
@@ -106,6 +109,20 @@ lazy_static! {
                 loaded: false,
                 setting: Some("StartingDialogs"),
                 database: true,
+                mandant_nr: -1,
+            },
+        );
+        map.insert(
+            AG_TEMP_PFAD,
+            Parameter {
+                key: AG_TEMP_PFAD,
+                value: None,
+                default: Some("".to_string()),
+                comment: None,
+                _trim: true,
+                loaded: false,
+                setting: Some("TempPath"),
+                database: false,
                 mandant_nr: -1,
             },
         );
@@ -210,6 +227,16 @@ impl<'a> Parameter {
             Err(poisoned) => poisoned.into_inner(),
         };
         if let Some(v) = (*guard).get(key) {
+            // Setting first.
+            if let Some(sk) = v.setting {
+                let guard2 = match PARAMS2.read() {
+                    Ok(guard) => guard,
+                    Err(poisoned) => poisoned.into_inner(),
+                };
+                if let Some(v) = (*guard2).get(sk) {
+                    return v.clone();
+                }
+            }
             return v.value.clone();
         }
         let guard2 = match PARAMS2.read() {
@@ -254,10 +281,15 @@ pub fn save() -> Result<(), RsbpError> {
         Err(poisoned) => poisoned.into_inner(),
     };
     for x in (*guard).iter() {
+        let mut key = x.0.to_string();
+        if let Some(k) = x.1.setting {
+            // Key in setting file.
+            key = k.to_string();
+        }
         if let Some(v) = &x.1.value {
-            map.insert(x.0.to_string(), Value::String(v.clone()));
+            map.insert(key, Value::String(v.clone()));
         } else {
-            map.insert(x.0.to_string(), Value::Null);
+            map.insert(key, Value::Null);
         }
     }
     let guard2 = match PARAMS2.read() {
@@ -364,6 +396,14 @@ pub fn set_ad120_start(v: bool) {
 /// Get start dialogs.
 pub fn get_start_dialogs() -> String {
     if let Some(v) = Parameter::get_value(AG_STARTDIALOGE) {
+        return v;
+    }
+    "".into()
+}
+
+/// Get temp path.
+pub fn get_temp_path() -> String {
+    if let Some(v) = Parameter::get_value(AG_TEMP_PFAD) {
         return v;
     }
     "".into()
