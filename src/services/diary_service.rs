@@ -455,7 +455,17 @@ pub fn get_file<'a>(
     let is_de = daten.config.is_de();
     let mut v: Vec<String> = vec![];
     v.push(M::tb002(&daten.get_now(), is_de));
-    // TODO Selektionskriterien ergänzen.
+    v.push(M::tb003(&s, is_de));
+    if let Some(uid) = puid {
+        if let Some(p) = reps::tb_ort::get(&db, &daten.mandant_nr, uid)? {
+            v.push(M::tb010(&p.bezeichnung, is_de));
+        }
+    }
+    if from.is_some() || to.is_some() {
+        v.push(M::tb011(&from, &to, is_de));
+    }
+    v.push("".into());
+    // TODO Zähler prüfen.
     for e in l {
         v.push(M::tb006(&e.datum, &e.eintrag, is_de));
     }

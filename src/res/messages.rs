@@ -203,13 +203,15 @@ pub enum Messages {
     SB035_,
     TB001,
     // TB002_,
-    TB003_,
-    TB004_,
+    // TB003_,
+    // TB004_,
     TB005,
     // TB006_,
     TB007,
     TB008,
     TB009,
+    // TB010_,
+    // TB011_,
     TB012,
     // TB013_,
     WP001,
@@ -1612,10 +1614,6 @@ impl Messages {
             M::SB034_ => r#"SB034{0} - {1}"#,
             M::SB035_ => r#"SB035{0} or {1}"#,
             M::TB001 => r#"TB001The search parameter is invalid."#,
-            M::TB003_ => {
-                r#"TB003Search: (/{0}/ or /{1}/ or /{2}/) and (/{3}/ or /{4}/ or /{5}/) and not (/{6}/ or /{7}/ or /{8}/)"#
-            }
-            M::TB004_ => r#"TB004Wrong counter at {0:yyyy-MM-dd}: {1}, expected: {2}"#,
             M::TB005 => r#"TB005Diary"#,
             M::TB007 => r#"TB007Type in a description."#,
             M::TB008 => r#"TB008The latitude must be between -90 and +90."#,
@@ -3106,10 +3104,6 @@ impl Messages {
             M::SB034_ => r#"SB034{0} - {1}"#,
             M::SB035_ => r#"SB035{0} oder {1}"#,
             M::TB001 => r#"TB001Der Such-Parameter ist ungültig."#,
-            M::TB003_ => {
-                r#"TB003Suche nach: (/{0}/ oder /{1}/ oder /{2}/) und (/{3}/ oder /{4}/ oder /{5}/) und nicht (/{6}/ oder /{7}/ oder /{8}/)"#
-            }
-            M::TB004_ => r#"TB004Falscher Zähler am {0:yyyy-MM-dd}: {1}, erwartet: {2}"#,
             M::TB005 => r#"TB005Tagebuch"#,
             M::TB007 => r#"TB007Die Bezeichnung darf nicht leer sein."#,
             M::TB008 => r#"TB008Die Breite muss zwischen -90 und +90 sein."#,
@@ -4492,11 +4486,48 @@ impl Messages {
         format!("Diary report {}", g.format("%Y-%m-%d %H:%M:%S"))
     }
 
-    pub fn tb006(g: &NaiveDate, e: &String, is_de: bool) -> String {
+    pub fn tb003(s: &[String; 9], is_de: bool) -> String {
+        if is_de {
+            return format!("Suche nach: (/{}/ oder /{}/ oder /{}/) und (/{}/ oder /{}/ oder /{}/) und nicht (/{}/ oder /{}/ oder /{}/)", s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8]);
+        }
+        format!("Search: (/{}/ or /{}/ or /{}/) and (/{}/ or /{}/ or /{}/) and not (/{}/ or /{}/ or /{}/)", s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8])
+    }
+
+    pub fn tb004(g: &NaiveDate, c: &str, e: &str, is_de: bool) -> String {
+        let d = g.format("%Y-%m-%d");
+        if is_de {
+            return format!("Falscher Zähler am {}: {}, erwartet: {}", d, c, e);
+        }
+        format!("Wrong counter at {}: {}, expected: {}", d, c, e)
+    }
+
+    pub fn tb006(g: &NaiveDate, e: &str, is_de: bool) -> String {
         if is_de {
             return format!("{} {}", g.format("%Y-%m-%d"), e);
         }
         format!("{} {}", g.format("%Y-%m-%d"), e)
+    }
+
+    pub fn tb010(d: &str, is_de: bool) -> String {
+        if is_de {
+            return format!("Position: {}", d);
+        }
+        format!("Position: {}", d)
+    }
+
+    pub fn tb011(f: &Option<NaiveDate>, t: &Option<NaiveDate>, is_de: bool) -> String {
+        let mut from = String::new();
+        if let Some(d) = f {
+            from = d.format("%Y-%m-%d").to_string();
+        }
+        let mut to = String::new();
+        if let Some(d) = t {
+            to = d.format("%Y-%m-%d").to_string();
+        }
+        if is_de {
+            return format!("Zeitraum: {} - {}", from, to);
+        }
+        format!("Time period: {} - {}", from, to)
     }
 
     pub fn tb013(g: &NaiveDate, is_de: bool) -> String {
