@@ -130,11 +130,14 @@ impl Date {
             nullable,
             with_calendar,
             open,
-            unknown,
+            unknown: unknown.clone(),
             value: None,
         };
         let cb = callback.clone();
         let d2 = Rc::new(RefCell::new(d));
+        // unknown.connect_clicked(
+        // glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_unknown(); }),
+        // );
         date.connect_key_release_event(glib::clone!(@strong cb, @strong d2 => move |_,_| {
             cb.borrow_mut().date_callback(&d2.borrow_mut().on_date_key());
             d2.borrow_mut().on_refresh();
@@ -296,10 +299,13 @@ impl Date {
             nullable,
             with_calendar,
             open,
-            unknown,
+            unknown: unknown.clone(),
             value: None,
         };
         let d2 = Rc::new(RefCell::new(d));
+        // unknown.connect_clicked(
+        //     glib::clone!(@strong d2 => move |_| { d2.borrow_mut().on_unknown(); }),
+        // );
         date.connect_key_release_event(glib::clone!(@strong d2 => move |_,_| {
             d2.borrow_mut().on_date_key();
             return gtk::Inhibit(false);
@@ -412,6 +418,19 @@ impl Date {
         DateEvent::Unchanged
     }
 
+    /// Handle Unknown.
+    fn on_unknown(&mut self) {
+        // println!("unknown");
+        if self.unknown.get_visible() {
+            if self.unknown.is_active() {
+                bin::set_date_grid_unknown(&self.grid, &None);
+            } else {
+                bin::set_date_grid_unknown(&self.grid, &Some(()));
+            }
+        }
+    }
+
+    /// Handle Down.
     fn on_down(&mut self) {
         // println!("down");
         if self.with_calendar {

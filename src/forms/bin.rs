@@ -572,9 +572,15 @@ pub fn get_text_cb(cb: &ComboBoxText) -> Option<String> {
 /// * returns: Value or error.
 pub fn get_date_grid(grid: &Grid) -> Option<NaiveDate> {
     unsafe {
-        if let Some(valnn) = grid.data::<Option<NaiveDate>>("date") {
+        if let (Some(valnn), Some(unn)) = (
+            grid.data::<Option<NaiveDate>>("date"),
+            grid.data::<&str>("unknown"),
+        ) {
             let val = valnn.as_ref().clone();
-            return val;
+            let u = unn.as_ref().clone();
+            if u == "" {
+                return val;
+            }
         }
     }
     None
@@ -587,10 +593,20 @@ pub fn get_date_grid(grid: &Grid) -> Option<NaiveDate> {
 pub fn set_date_grid(grid: &Grid, v: &Option<NaiveDate>, emit_signal: bool) {
     unsafe {
         grid.set_data::<Option<NaiveDate>>("date", v.clone());
+        grid.set_data::<&str>("unknown", functions::iif(v.is_none(), "none", ""));
     }
     if emit_signal {
         // Trick: Signal by non existent popup menu.
         grid.emit_popup_menu();
+    }
+}
+
+/// Sets the unknown date value of a Grid.
+/// * grid: Affected grid.
+/// * v: Value to set.
+pub fn set_date_grid_unknown(grid: &Grid, v: &Option<()>) {
+    unsafe {
+        grid.set_data::<&str>("unknown", functions::iif(v.is_none(), "none", ""));
     }
 }
 
