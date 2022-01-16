@@ -11,10 +11,20 @@ pub fn mach_nichts() -> i32 {
     0
 }
 
-/// Wandelt einen String in einen Integer um.
-/// * s: Zu konvertierender String.
+/// Convert string to i32.
+/// * s: Affected string.
 pub fn to_i32(s: &str) -> i32 {
     let x = s.parse::<i32>();
+    if let Ok(i) = x {
+        return i;
+    }
+    0
+}
+
+/// Convert string to i64.
+/// * s: Affected string.
+pub fn to_i64(s: &str) -> i64 {
+    let x = s.parse::<i64>();
     if let Ok(i) = x {
         return i;
     }

@@ -11,6 +11,7 @@ use crate::{
 };
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use diesel::Connection;
+use regex::{Regex, RegexBuilder};
 use rsbp_rep::{
     models::{TbEintrag, TbOrt},
     models_ext::TbEintragOrtExt,
@@ -439,8 +440,25 @@ pub fn get_file<'a>(
     from: &Option<NaiveDate>,
     to: &Option<NaiveDate>,
 ) -> Result<Vec<String>> {
-    let s = check_search(search);
+    let mut s = check_search(search);
     // println!("{:?}", s);
+    let mut rf = false; // Reihenfolge-Test
+    let mut str = s[0].to_string();
+    let mut muster = String::new();
+
+    if str.contains("####") {
+        muster = regex::escape(&str).replace("\\#\\#\\#\\#", "\\D*(\\d+)");
+        if muster.starts_with("%") {
+            muster = muster[1..].to_string();
+        }
+        if muster.ends_with("%") {
+            let l = muster.len();
+            muster = muster[..l - 1].to_string();
+        }
+        str = str.replace("####", "");
+        rf = true;
+    }
+    s[0] = str;
     let c = reps::establish_connection(daten);
     let db = DbContext::new(daten, &c);
     let l = reps::tb_eintrag::get_list_search(
@@ -465,9 +483,35 @@ pub fn get_file<'a>(
         v.push(M::tb011(&from, &to, is_de));
     }
     v.push("".into());
-    // TODO Zähler prüfen.
-    for e in l {
-        v.push(M::tb006(&e.datum, &e.eintrag, is_de));
+    if rf {
+        // Zähler prüfen.
+        let mut z: i64 = -1;
+        let p: Regex = RegexBuilder::new(&muster)
+            .case_insensitive(true)
+            .build()
+            .map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
+        for e in l {
+            let str = e.eintrag;
+            v.push(M::tb006(&e.datum, &str, is_de));
+            if !str.is_empty() {
+                for m in p.captures_iter(&str) {
+                    let l = functions::to_i64(&m[1]);
+                    if z < 0 {
+                        z = l;
+                    } else if z != l {
+                        // Falscher Zähler am %1$s: %2$s, erwartet: %3$s
+                        return Err(RsbpError::error_string(
+                            M::tb004(&e.datum, &m[1], &z.to_string().as_str(), is_de).as_str(),
+                        ));
+                    }
+                    z = z + 1;
+                }
+            }
+        }
+    } else {
+        for e in l {
+            v.push(M::tb006(&e.datum, &e.eintrag, is_de));
+        }
     }
     Ok(v)
 }
