@@ -1,6 +1,7 @@
 use crate::res::messages::M;
-use chrono::{Datelike, NaiveDate, NaiveDateTime, Weekday};
+use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, Weekday};
 use lazy_static::lazy_static;
+use rand::Rng;
 use regex::{Regex, RegexBuilder};
 use std::borrow::Cow;
 use thousands::Separable;
@@ -455,6 +456,28 @@ pub fn to_coordinates(s: &str) -> Option<(f64, f64, f64)> {
         ));
     }
     None
+}
+
+/// Get a file name with optional date and random number.
+pub fn get_file_name(name: &str, date: bool, random: bool, ext: &str) -> String {
+    let mut s = String::new();
+    s.push_str(name);
+    if date {
+        let now: DateTime<Local> = Local::now();
+        s.push('_');
+        s.push_str(now.format("%Y%m%d").to_string().as_str());
+    }
+    if random {
+        let mut rng = rand::thread_rng();
+        let n: u32 = rng.gen_range(1000..10000);
+        s.push('_');
+        s.push_str(n.to_string().as_str());
+    }
+    if !ext.is_empty() {
+        s.push('.');
+        s.push_str(ext);
+    }
+    s
 }
 
 #[cfg(test)]
