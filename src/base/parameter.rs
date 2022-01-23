@@ -43,6 +43,9 @@ pub const DB_DRIVER_CONNECT: &str = "DB_DRIVER_CONNECT";
 /// Parameter-Key: AG_ANWENDUNGS_TITEL.
 const AG_ANWENDUNGS_TITEL: &str = "AG_ANWENDUNGS_TITEL";
 
+/// Parameter-Key: AG_HILFE_DATEI.
+const AG_HILFE_DATEI: &str = "AG_HILFE_DATEI";
+
 /// Parameter-Key: AG_TEST_PRODUKTION.
 const AG_TEST_PRODUKTION: &str = "AG_TEST_PRODUKTION";
 
@@ -96,6 +99,20 @@ lazy_static! {
                 setting: Some("TestProduktion"),
                 database: true,
                 mandant_nr: 0,
+            },
+        );
+        map.insert(
+          AG_HILFE_DATEI,
+            Parameter {
+                key: AG_HILFE_DATEI,
+                value: None,
+                default: Some("".to_string()),
+                comment: None,
+                _trim: true,
+                loaded: false,
+                setting: Some("HelpFile"),
+                database: false,
+                mandant_nr: -1,
             },
         );
         map.insert(
@@ -359,12 +376,20 @@ pub fn get_title() -> String {
     res::APP_NAME.into()
 }
 
-/// Ist es ein Test-Mandant?
+/// Is it a test client?
 pub fn get_test() -> bool {
     if let Some(v) = &Parameter::get_value(AG_TEST_PRODUKTION) {
         return functions::cmp(v, "TEST");
     }
     true
+}
+
+/// Get path to help file.
+pub fn get_help_file() -> String {
+    if let Some(v) = Parameter::get_value(AG_HILFE_DATEI) {
+        return v;
+    }
+    "".to_string()
 }
 
 /// Get amount of day for birthday list.

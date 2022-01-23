@@ -1,4 +1,4 @@
-use super::{am::am100_change::Am100Change, bin};
+use super::{am::am100_change::Am100Change, bin, ui_tools};
 use crate::{
     apis::services::{self, ServiceDaten},
     base::{
@@ -236,7 +236,7 @@ impl MainWindow {
         }
         mw.menu_backups
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO AG400Backup");
             }));
         {
             let gui = Arc::clone(mw);
@@ -267,7 +267,7 @@ impl MainWindow {
             }));
         mw.menu_options
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO AM500Options");
             }));
         mw.menu_dialogs
             .connect_activate(glib::clone!(@strong mw => move |_| {
@@ -301,107 +301,107 @@ impl MainWindow {
         }
         mw.menu_notes
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ700Memos");
             }));
         mw.menu_persons
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO AD100Persons");
             }));
         mw.menu_mileages
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ250Mileages");
             }));
         mw.menu_bikes
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ200Bikes");
             }));
         mw.menu_books
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ340Books");
             }));
         mw.menu_authors
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ300Authors");
             }));
         mw.menu_series
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ320Series");
             }));
         mw.menu_statistics
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO FZ100Statistics");
             }));
         mw.menu_sudoku
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO SO100Sudoku");
             }));
         mw.menu_detective
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO SO200Detektiv");
             }));
         mw.menu_bookings
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH400Bookings");
             }));
         mw.menu_events
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH300Events");
             }));
         mw.menu_accounts
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH200Accounts");
             }));
         mw.menu_periods
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH100Periods");
             }));
         mw.menu_finalbalance
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH500Balance SB");
             }));
         mw.menu_plbalance
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH500Balance GV");
             }));
         mw.menu_openingbalance
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO HH500Balance EB");
             }));
         mw.menu_ancestors
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO SB200Ancestors");
             }));
         mw.menu_families
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO SB300Families");
             }));
         mw.menu_sources
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO SB400Sources");
             }));
         mw.menu_stocks
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP200Stocks");
             }));
         mw.menu_configurations
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP300Configurations");
             }));
         mw.menu_chart
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP100Chart");
             }));
         mw.menu_investments
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP250Investments");
             }));
         mw.menu_bookings3
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP400Bookings");
             }));
         mw.menu_prices
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                MainWindow::not_implemented(Some(&mw.window), "TODO WP500Prices");
             }));
         mw.menu_about.connect_activate(|_| {
             let logobuf = res::load_logo().unwrap_or(None);
@@ -411,7 +411,11 @@ impl MainWindow {
         });
         mw.menu_help2
             .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+                let hf = parameter::get_help_file();
+                if !hf.is_empty() {
+                    let r = ui_tools::start_url(&hf);
+                    bin::get(&r, Some(&mw.window));
+                }
             }));
     }
 
@@ -605,9 +609,10 @@ impl MainWindow {
     }
 
     /// Show not implemented Messages.
-    /// * parent: Parent-Window für MessageBox.
+    /// * parent: Parent window for MessageBox.
+    /// * _todo: Todo text.
     /// * returns: nothing
-    pub fn not_implemented(parent: Option<&gtk::Window>) -> () {
+    pub fn not_implemented(parent: Option<&gtk::Window>, _todo: &str) -> () {
         let r: Result<(), RsbpError> =
             Err(RsbpError::error_msg(M::MIMPL, config::get_config().is_de()));
         bin::get(&r, parent);
@@ -763,7 +768,7 @@ impl MainWindow {
         let p = gtk::AboutDialog::new();
         p.set_authors(&["Wolfgang Kuehl"]);
         p.set_copyright(Some(
-            String::from("Copyright © 2021 Wolfgang Kuehl.\nAll rights reserved.").as_str(),
+            String::from("Copyright © 2022 Wolfgang Kuehl.\nAll rights reserved.").as_str(),
         ));
         p.set_modal(false);
         p.set_keep_above(true);

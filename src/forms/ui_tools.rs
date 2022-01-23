@@ -7,7 +7,9 @@ use std::{
 
 /// Start url in browser.
 pub fn start_url(url: &str) -> Result<()> {
-    open::that(&url).map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
+    if !url.is_empty() {
+        open::that(&url).map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
+    }
     Ok(())
     // if let Ok(process) = std::process::Command::new("ls")
     //     .args(&["-l", "/home/wolfgang"])
