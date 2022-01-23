@@ -2986,7 +2986,7 @@ impl Messages {
             M::HH001 => r#"HH001Eigenkapital"#,
             M::HH002 => r#"HH002Gewinn/Verlust"#,
             M::HH003 => r#"HH003Keine Perioden gefunden."#,
-            M::HH004 => r#"HH004ie letzte Periode kann nicht gelöscht werden."#,
+            M::HH004 => r#"HH004Die letzte Periode kann nicht gelöscht werden."#,
             M::HH005_ => r#"HH005Periode {0} fehlt."#,
             M::HH006_ => r#"HH006{0:0000000000}{1}{2}{3}"#,
             M::HH007 => r#"HH007Die Bezeichnung darf nicht leer sein."#,

@@ -1,4 +1,4 @@
-use super::bin;
+use super::{am::am100_change::Am100Change, bin};
 use crate::{
     apis::services::{self, ServiceDaten},
     base::{
@@ -262,8 +262,8 @@ impl MainWindow {
                 mw.logout();
             }));
         mw.menu_pwchange
-            .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window));
+            .connect_activate(glib::clone!(@weak application => move |_| {
+                let _ = Am100Change::new(&application);
             }));
         mw.menu_options
             .connect_activate(glib::clone!(@strong mw => move |_| {

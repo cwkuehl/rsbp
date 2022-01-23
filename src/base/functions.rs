@@ -210,6 +210,17 @@ pub fn cmpo(s: &Option<String>, s2: &str) -> bool {
     l1 == l2
 }
 
+/// Compare strings case insensitive where None is like empty string.
+/// * s: 1. string.
+/// * s2: 2. string.
+pub fn cmpuo(s: &Option<String>, s2: &str) -> bool {
+    let l1 = match s {
+        Some(s1) => s1.clone(),
+        _ => "".into(),
+    };
+    l1 == s2
+}
+
 // /// Abschneiden der ersten 5 Zeichen, falls möglich.
 // fn m0(s: &str, cut: bool) -> Option<&str> {
 //     if !cut || s.is_empty() || s.len() < 5 {

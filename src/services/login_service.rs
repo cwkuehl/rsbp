@@ -102,6 +102,59 @@ pub fn login<'a>(daten: &'a ServiceDaten, password: &'a str, save: bool) -> Resu
     tr
 }
 
+/// Change user password.
+/// * daten: Service data for database access.
+/// * client: Affected client number.
+/// * user_id: Affected user ID.
+/// * password_old: Old password.
+/// * password_new: New password.
+/// * save: Save user ID for automatic login?
+pub fn change_password<'a>(
+    daten: &'a ServiceDaten,
+    client: i32,
+    user_id: &'a str,
+    password_old: &'a str,
+    password_new: &'a str,
+    save: bool,
+) -> Result<()> {
+    let mut r: Vec<String> = vec![];
+    let is_de = daten.config.is_de();
+    if client <= 0 {
+        r.push(Messages::mec(M::AM001, is_de).into_owned());
+        return Err(RsbpError::error(&r));
+    }
+    if user_id.is_empty() {
+        r.push(Messages::mec(M::AM001, is_de).into_owned());
+        return Err(RsbpError::error(&r));
+    }
+    if password_new.is_empty() {
+        r.push(Messages::mec(M::AM002, is_de).into_owned());
+        return Err(RsbpError::error(&r));
+    }
+
+    let c = reps::establish_connection(daten);
+    let mut db = DbContext::new(daten, &c);
+    let tr = c.transaction::<(), RsbpError, _>(|| {
+        let ouser = reps::benutzer::get(&db, &client, &user_id.to_string())?;
+        if let Some(mut user) = ouser {
+            if !functions::cmpuo(&user.passwort, password_old) {
+                r.push(Messages::mec(M::AM001, is_de).into_owned());
+                return Err(RsbpError::error(&r));
+            }
+            user.passwort = Some(password_new.to_string());
+            reps::benutzer::update(&mut db, &user)?;
+            save_login(&mut db, client, user_id, save)?;
+            return Ok(());
+        }
+        r.push(Messages::mec(M::AM001, is_de).into_owned());
+        return Err(RsbpError::error(&r));
+    });
+    if tr.is_ok() {
+        UndoRedoStack::add_undo(&mut db.ul);
+    }
+    tr
+}
+
 /// Liefert Liste von Parametern.
 /// * daten: ServiceDaten mit betroffener Benutzer-ID für Datenbank-Zugriff.
 /// * m_nr: Betroffene Mandantennummer.

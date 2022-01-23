@@ -44,7 +44,7 @@ mod tests {
     /// Generieren einer GUI-Struktur.
     #[test]
     fn generate_gui() {
-        let glade_src = include_str!("res/gtkgui/tb/TB210Position.glade");
+        let glade_src = include_str!("res/gtkgui/am/AM100Change.glade");
         let mut reader = Reader::from_str(glade_src);
         reader.trim_text(true);
 
