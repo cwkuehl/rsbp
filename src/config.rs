@@ -17,7 +17,7 @@ pub struct RsbpConfig {
 }
 
 const SETTINGFILENAME_INIT: &str = ".rsbp.json";
-const DBFILENAME_INIT: &str = "/home/wolfgang/hsqldb/rsbp.db";
+const DBFILENAME_INIT: &str = "rsbp.db";
 
 impl RsbpConfig {
     pub fn init() -> Self {
@@ -70,6 +70,12 @@ impl RsbpConfig {
         if cfg!(debug_assertions) {
             dbg!(&dbfilename);
         }
+        if !std::path::Path::new(&dbfilename).exists() {
+            return Err(RsbpError::error_string(
+                format!("Database {} does not exist", dbfilename).as_str(),
+            ));
+        }
+
         let mut locale = RsbpLocale::En;
         // locale_config::Locale::set_current(locale_config::Locale::new("en-GB").unwrap());
         let cis = locale_config::Locale::current();

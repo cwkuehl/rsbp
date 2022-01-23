@@ -1,3 +1,4 @@
+use gdk::gio::ApplicationFlags;
 use gtk::prelude::*;
 use log::{error, LevelFilter};
 use log4rs::append::file::FileAppender;
@@ -39,8 +40,13 @@ fn main() -> Result<(), RsbpError> {
         error!("Hello, world!");
     }
 
-    // GTK-Anwendung starten.
-    let application = gtk::Application::new(Some(res::APP_ID), Default::default());
+    // Start GTK application with ignoring command line.
+    let flags = ApplicationFlags::HANDLES_COMMAND_LINE; // Default::default();
+    let application = gtk::Application::new(Some(res::APP_ID), flags);
+    application.connect_command_line(|app, _| {
+        app.activate();
+        0
+    });
     application.connect_activate(rsbp::forms::main_window::build_ui);
     application.run();
     Ok(())
