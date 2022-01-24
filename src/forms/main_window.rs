@@ -796,8 +796,10 @@ impl MainWindow {
         let daten = services::get_daten();
         p.set_comments(Some(
             format!(
-                "RSBP is a simple budget program.\n Client: {} User: {}",
-                daten.mandant_nr, daten.benutzer_id
+                "RSBP is a simple budget program.\nDatabase: {}\nClient: {} User: {}",
+                daten.config.get_dbfilename(),
+                daten.mandant_nr,
+                daten.benutzer_id
             )
             .as_str(),
         ));

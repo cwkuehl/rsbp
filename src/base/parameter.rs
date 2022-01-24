@@ -209,9 +209,12 @@ impl<'a> Parameter {
         let daten = services::get_daten();
         let liste = login_service::get_list_param(&daten, m_nr)?;
         for x in (*guard).values_mut().into_iter() {
-            if x.database {
-                if let Some(p) = liste.iter().find(|a| a.schluessel == x.key) {
+            if let Some(p) = liste.iter().find(|a| a.schluessel == x.key) {
+                if x.database {
                     x.value = p.wert.clone();
+                }
+                if let Some(key2) = x.setting {
+                    (*guard2).insert(key2.to_string(), p.wert.clone());
                 }
             }
         }
@@ -272,16 +275,20 @@ impl<'a> Parameter {
             Ok(guard) => guard,
             Err(poisoned) => poisoned.into_inner(),
         };
+        let mut key2 = key.clone();
         if let Some(v) = (*guard).get_mut(key) {
             v.value = (*value).clone();
-            return;
+            if let Some(k2) = v.setting {
+                key2 = k2;
+            } else {
+                return;
+            }
         }
         let mut guard2 = match PARAMS2.write() {
             Ok(guard) => guard,
             Err(poisoned) => poisoned.into_inner(),
         };
-        //let e = (*guard2).entry(key); //.or_insert((*value).clone());
-        if let Some(v) = (*guard2).get_mut(key) {
+        if let Some(v) = (*guard2).get_mut(key2) {
             *v = (*value).clone();
             return;
         } else {
@@ -290,34 +297,43 @@ impl<'a> Parameter {
     }
 }
 
-/// Speichern der Parameter.
+/// Save Parameters.
 pub fn save() -> Result<(), RsbpError> {
+    let daten = services::get_daten();
+    set_connect(daten.config.get_dbfilename());
     let mut map = serde_json::Map::new();
     let guard = match PARAMS.read() {
         Ok(guard) => guard,
         Err(poisoned) => poisoned.into_inner(),
     };
-    for x in (*guard).iter() {
-        let mut key = x.0.to_string();
-        if let Some(k) = x.1.setting {
-            // Key in setting file.
-            key = k.to_string();
-        }
-        if let Some(v) = &x.1.value {
-            map.insert(key, Value::String(v.clone()));
-        } else {
-            map.insert(key, Value::Null);
-        }
-    }
     let guard2 = match PARAMS2.read() {
         Ok(guard) => guard,
         Err(poisoned) => poisoned.into_inner(),
     };
     for x in (*guard2).iter() {
+        // pure setting
+        let key = x.0.clone();
         if let Some(v) = &x.1 {
-            map.insert(x.0.to_string(), Value::String(v.clone()));
+            // println!("map2 {}: {}", x.0, v);
+            map.insert(key, Value::String(v.clone()));
         } else {
-            map.insert(x.0.to_string(), Value::Null);
+            map.insert(key, Value::Null);
+        }
+    }
+    for x in (*guard).iter() {
+        // setting of parameter
+        let key = x.0.to_string();
+        if let Some(key2) = x.1.setting {
+            if let Some(v) = &x.1.value {
+                // println!("map  {}: {}", key, v);
+                map.insert(key2.to_string(), Value::String(v.clone()));
+            } else {
+                map.insert(key2.to_string(), Value::Null);
+            }
+        }
+        if map.contains_key(key.as_str()) {
+            // Eliminate wrong entry.
+            map.remove(key.as_str());
         }
     }
     let s = serde_json::to_string_pretty(&map)
@@ -326,9 +342,13 @@ pub fn save() -> Result<(), RsbpError> {
     fs::write(config.get_settingfilename(), s)
         .map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
 
-    // Speichern der Parameter in der Datenbank.
-    let daten = services::get_daten();
+    // Save parameters in database.
     login_service::save_parameter(&daten, &(*guard))
+}
+
+/// Set the path to the sqlite database.
+pub fn set_connect(b: &str) {
+    Parameter::set_value(DB_DRIVER_CONNECT, &Some(b.to_string()));
 }
 
 /// Einstellung-Schlüssel: Mandant bei Anmeldung.
