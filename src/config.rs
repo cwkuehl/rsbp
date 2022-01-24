@@ -3,6 +3,8 @@ use crate::{apis::services, base::parameter};
 use lazy_static::lazy_static;
 use regex::Regex;
 use regex::RegexBuilder;
+use serde_json::Value;
+use std::fs;
 //use separator::{FixedPlaceSeparatable, Separatable};
 use std::{
     path::{Path, PathBuf},
@@ -47,7 +49,7 @@ impl RsbpConfig {
         //     return Err(RsbpError::ConfigError);
         // }
         let mut settingfilename = SETTINGFILENAME_INIT.to_string();
-        let mut dbfilename = DBFILENAME_INIT.to_string();
+        let mut dbfilename = "".to_string();
         for arg in args.into_iter().skip(1) {
             for cap in RE0.captures_iter(arg.as_str()) {
                 settingfilename = cap[1].to_string();
@@ -66,6 +68,21 @@ impl RsbpConfig {
             settingfilename = path.into_os_string().into_string().map_err(|err| {
                 RsbpError::error_string(err.to_str().unwrap_or("Settingfilename"))
             })?;
+        }
+        if dbfilename.is_empty() {
+            // Read dbfilename from setting file.
+            let path: PathBuf = settingfilename.clone().into();
+            let str = fs::read_to_string(path).unwrap_or("{}".to_string());
+            let js: Value = serde_json::from_str(str.as_str())
+                .map_err(|err| RsbpError::error_string(err.to_string().as_str()))?;
+            if let Some(cs0) = js.get("ConnectionString") {
+                if let Some(cs) = cs0.as_str() {
+                    dbfilename = cs.to_string();
+                }
+            }
+        }
+        if dbfilename.is_empty() {
+            dbfilename = DBFILENAME_INIT.to_string();
         }
         if cfg!(debug_assertions) {
             dbg!(&dbfilename);

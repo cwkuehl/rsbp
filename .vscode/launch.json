@@ -20,7 +20,7 @@
         }
       },
       "args": [
-        "DB_DRIVER_CONNECT=/home/wolfgang/hsqldb/rsbp.db"
+        "DB_DRIVER_CONNECTxxx=/home/wolfgang/hsqldb/rsbp.db"
       ],
       "cwd": "${workspaceFolder}"
     },
