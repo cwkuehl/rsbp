@@ -47,7 +47,6 @@ pub struct MainWindow {
     menu_series: gtk::MenuItem,
     menu_statistics: gtk::MenuItem,
     menu_sudoku: gtk::MenuItem,
-    menu_detective: gtk::MenuItem,
     menu_bookings: gtk::MenuItem,
     menu_events: gtk::MenuItem,
     menu_accounts: gtk::MenuItem,
@@ -160,7 +159,6 @@ impl MainWindow {
             menu_series: builder.object::<gtk::MenuItem>("MenuSeries").unwrap(),
             menu_statistics: builder.object::<gtk::MenuItem>("MenuStatistics").unwrap(),
             menu_sudoku: builder.object::<gtk::MenuItem>("MenuSudoku").unwrap(),
-            menu_detective: builder.object::<gtk::MenuItem>("MenuDetective").unwrap(),
             menu_bookings: builder.object::<gtk::MenuItem>("MenuBookings").unwrap(),
             menu_events: builder.object::<gtk::MenuItem>("MenuEvents").unwrap(),
             menu_accounts: builder.object::<gtk::MenuItem>("MenuAccounts").unwrap(),
@@ -335,10 +333,6 @@ impl MainWindow {
             .connect_activate(glib::clone!(@strong mw => move |_| {
                 MainWindow::not_implemented(Some(&mw.window), "TODO SO100Sudoku");
             }));
-        mw.menu_detective
-            .connect_activate(glib::clone!(@strong mw => move |_| {
-                MainWindow::not_implemented(Some(&mw.window), "TODO SO200Detektiv");
-            }));
         mw.menu_bookings
             .connect_activate(glib::clone!(@strong mw => move |_| {
                 MainWindow::not_implemented(Some(&mw.window), "TODO HH400Bookings");
@@ -459,7 +453,6 @@ impl MainWindow {
         self.menu_series.set_visible(b);
         self.menu_statistics.set_visible(b);
         self.menu_sudoku.set_visible(b);
-        self.menu_detective.set_visible(b);
 
         self.menu_bookings.set_visible(b);
         self.menu_events.set_visible(b);

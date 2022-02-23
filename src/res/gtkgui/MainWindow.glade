@@ -306,15 +306,6 @@
                         <signal name="activate" handler="OnMenuSudoku" swapped="no"/>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkMenuItem" id="MenuDetective">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label">Menu.detective</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="OnMenuDetective" swapped="no"/>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
